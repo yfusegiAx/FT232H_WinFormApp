@@ -13,9 +13,13 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using FTD2XX_NET;//FTDI製品の利用のため必要
 using System.Threading;
+
 
 namespace FT232H_WinFormApp
 {
@@ -25,12 +29,21 @@ namespace FT232H_WinFormApp
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
+        /// 
+        /*
+          public Form1()
+        {
+            InitializeComponent();//初期化
+        }
+         */
         [STAThread]
         static void Main()
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
     }

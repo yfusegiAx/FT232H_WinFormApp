@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj": {}
+    "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj": {}
   },
   "projects": {
-    "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj": {
+    "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
+        "projectUniqueName": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
         "projectName": "FT232H_WinFormApp",
-        "projectPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
+        "projectPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
         "packagesPath": "C:\\Users\\stlc\\.nuget\\packages\\",
-        "outputPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\obj\\",
+        "outputPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
