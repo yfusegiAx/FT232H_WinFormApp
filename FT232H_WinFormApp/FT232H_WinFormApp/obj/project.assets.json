@@ -1,0 +1,48 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v6.0,Profile=windows10.0.17763.0": {}
+  },
+  "libraries": {},
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v6.0,Profile=windows10.0.17763.0": []
+  },
+  "packageFolders": {
+    "C:\\Users\\stlc\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
+      "projectName": "FT232H_WinFormApp",
+      "projectPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp.csproj",
+      "packagesPath": "C:\\Users\\stlc\\.nuget\\packages\\",
+      "outputPath": "Z:\\FT232H_WinFormApp\\FT232H_WinFormApp\\FT232H_WinFormApp\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\stlc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net60-windows10.0.17763.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net60-windows10.0.17763.0": {
+          "projectReferences": {}
+        }
+      }
+    },
+    "frameworks": {
+      "net60-windows10.0.17763.0": {}
+    }
+  }
+}
