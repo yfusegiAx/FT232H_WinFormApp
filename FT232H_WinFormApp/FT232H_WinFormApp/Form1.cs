@@ -23,8 +23,6 @@ namespace FT232H_WinFormApp
         //driverの定義
         FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;//通信可能な状態
 
-        //driverの定義
-
         //FT232Hに命令を出すための宣言
 
         // ###### I2C Library defines ######
@@ -127,7 +125,37 @@ namespace FT232H_WinFormApp
 
         public Form1()
         {
+            uint written = 0;
+            uint bufnum = 0;
             InitializeComponent();
+            myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
+
+            byte[] code;
+            //List<byte> code_list = new List<byte>(); ;
+
+            //code_list.Count;
+
+            code = new byte[] { 0x80, 0b11111111, 0xFF };
+            myFtdiDevice.Write(code, code.Length, ref written);
+
+            code = new byte[] { 0x80, 0b11110001, 0xFF };
+            myFtdiDevice.Write(code, code.Length, ref written);
+
+            code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
+            myFtdiDevice.Write(code, code.Length, ref written);
+
+            code = new byte[] { 0x80, 0b11111111, 0xFF };
+            myFtdiDevice.Write(code, code.Length, ref written);
+
+            myFtdiDevice.GetRxBytesAvailable(ref bufnum);
+
+            byte[] buf = new byte[bufnum];
+
+            myFtdiDevice.Write(new byte[] {0x81},1,ref written);
+
+            myFtdiDevice.Read(buf, 1,ref written);
+
         }
         //label1:interfaceの"status"
         //label2:interfaceのstatus表示
