@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using FTD2XX_NET;
 using System.Threading;
+using System.Diagnostics;
 
 namespace FT232H_WinFormApp
 {
@@ -129,30 +130,37 @@ namespace FT232H_WinFormApp
             uint bufnum = 0;
             InitializeComponent();
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            myFtdiDevice.SetBitMode(0xFF,0x0);//setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
+            //bitmode 0=reset 
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
+            //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
 
             byte[] code;
-            //List<byte> code_list = new List<byte>(); ;
+            //List<byte> code_list = new List<byte>();//Listだと遅い
 
             //code_list.Count;
+            
+            //code = new byte[] { 0x80, 0b11111111, 0xFF };
+            //myFtdiDevice.Write(code, code.Length, ref written);
+           
+            code = new byte[] { 0x80, 0b11110001, 0xFF };//3byte書き込まれる
+           
+            myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
+          
+            //myFtdiDevice.Write(new byte[] {0x80},1,ref written);
+            Debug.WriteLine("code.length="+code.Length);//code.length確認　
+            Debug.WriteLine("written=" + written);//written確認　
+            /*
+           code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
+           myFtdiDevice.Write(code, code.Length, ref written);
 
-            code = new byte[] { 0x80, 0b11111111, 0xFF };
-            myFtdiDevice.Write(code, code.Length, ref written);
-
-            code = new byte[] { 0x80, 0b11110001, 0xFF };
-            myFtdiDevice.Write(code, code.Length, ref written);
-
-            code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
-            myFtdiDevice.Write(code, code.Length, ref written);
-
-            code = new byte[] { 0x80, 0b11111111, 0xFF };
-            myFtdiDevice.Write(code, code.Length, ref written);
-
+           code = new byte[] { 0x80, 0b11111111, 0xFF };
+           myFtdiDevice.Write(code, code.Length, ref written);
+           */
             myFtdiDevice.GetRxBytesAvailable(ref bufnum);
 
             byte[] buf = new byte[bufnum];
 
-            myFtdiDevice.Write(new byte[] {0x81},1,ref written);
 
             myFtdiDevice.Read(buf, 1,ref written);
 
