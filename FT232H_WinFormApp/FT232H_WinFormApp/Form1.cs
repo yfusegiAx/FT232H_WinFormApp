@@ -111,7 +111,7 @@ namespace FT232H_WinFormApp
         static byte Global_Red = 0;
         static byte Global_Green = 0;
         static byte Global_Blue = 0;
-        uint devcount = 0;
+        uint deviceCount = 0;
 
         //###################################################################################################################################
         //###################################################################################################################################
@@ -122,14 +122,45 @@ namespace FT232H_WinFormApp
         // Create new instance of the FTDI device class
         //FTDIデバイスクラスのインスタンス生成
         //デバイスクラス..usbインターフェースが所持している製品情報
+
+        //label1:interfaceの"status"
+        //label2:interfaceのstatus表示
+        //label3:interfaceの"proximity"
+        //label4:interfaceの"status"
+        //label5:interfaceの"Red"
+        //label6:interfaceのRedの値
+        //label7:interfaceの"Green"
+        //label8:interfaceのGreenの値
+        //label9:interfaceの"Blue"
+        //label10:interfaceのBlueの値
+
         FTDI myFtdiDevice = new FTDI();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Form1()
         {
+            var stopwatch = new Stopwatch();
+
             uint written = 0;
             uint bufnum = 0;
             InitializeComponent();
+            stopwatch.Start();
+
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            stopwatch.Stop();
+
+            var ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);
+            if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            {
+                status_name_label.Text = "ft_OK";
+            }
+            else
+            {
+                status_name_label.Text = $"{ftStatus}";
+                Debug.WriteLine($"time ={stopwatch.ElapsedMilliseconds} [ms]");
+            }
             myFtdiDevice.SetBitMode(0xFF,0x0);//setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
             //bitmode 0=reset 
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
@@ -139,17 +170,23 @@ namespace FT232H_WinFormApp
             //List<byte> code_list = new List<byte>();//Listだと遅い
 
             //code_list.Count;
-            
-            //code = new byte[] { 0x80, 0b11111111, 0xFF };
-            //myFtdiDevice.Write(code, code.Length, ref written);
-           
-            code = new byte[] { 0x80, 0b11110001, 0xFF };//3byte書き込まれる
-           
-            myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
-          
+
+            for (int i = 0; i < 8; i++)
+            {
+                code = new byte[] { 0x80, 0b11111111, 0xFF };
+                myFtdiDevice.Write(code, code.Length, ref written);
+                Thread.Sleep(500);
+
+
+                code = new byte[] { 0x80, 0b11110001, 0xFF };//3byte書き込まれる
+                myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
+
+                Thread.Sleep(500);
+            }
+
             //myFtdiDevice.Write(new byte[] {0x80},1,ref written);
-            Debug.WriteLine("code.length="+code.Length);//code.length確認　
-            Debug.WriteLine("written=" + written);//written確認　
+            //Debug.WriteLine("code.length="+code.Length);//code.length確認　
+            //Debug.WriteLine("written=" + written);//written確認　
             /*
            code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
            myFtdiDevice.Write(code, code.Length, ref written);
@@ -165,23 +202,17 @@ namespace FT232H_WinFormApp
             myFtdiDevice.Read(buf, 1,ref written);
 
         }
-        //label1:interfaceの"status"
-        //label2:interfaceのstatus表示
-        //label3:interfaceの"proximity"
-        //label4:interfaceの"status"
-        //label5:interfaceの"Red"
-        //label6:interfaceのRedの値
-        //label7:interfaceの"Green"
-        //label8:interfaceのGreenの値
-        //label9:interfaceの"Blue"
-        //label10:interfaceのBlueの値
-
+      
 
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
 
