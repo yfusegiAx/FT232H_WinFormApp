@@ -146,12 +146,13 @@ namespace FT232H_WinFormApp
             uint written = 0;
             uint bufnum = 0;
             InitializeComponent();
-            stopwatch.Start();
+            stopwatch.Start();//ランプ起動に何秒かかるか
 
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+
             stopwatch.Stop();
 
-            var ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);
+            var ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount番目にアクセスしたデバイスのステータスを返す
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 status_name_label.Text = "ft_OK";
@@ -171,18 +172,23 @@ namespace FT232H_WinFormApp
 
             //code_list.Count;
 
-            for (int i = 0; i < 8; i++)
+            code = new byte[] { 0x80, 0b11111111, 0xFF };
+            myFtdiDevice.Write(code, code.Length, ref written);
+            //Thread.Sleep(500);
+            
+            for (int i = 0; i < 100; i++)
             {
-                code = new byte[] { 0x80, 0b11111111, 0xFF };
+                code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
                 myFtdiDevice.Write(code, code.Length, ref written);
                 Thread.Sleep(500);
 
 
-                code = new byte[] { 0x80, 0b11110001, 0xFF };//3byte書き込まれる
+                code = new byte[] { 0x80, 0b11111110, 0xFF };//3byte書き込まれる //adbus0~adbus6は１　adbus7は0 adbus0だけ接続している場合は点滅する
                 myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
 
                 Thread.Sleep(500);
             }
+            
 
             //myFtdiDevice.Write(new byte[] {0x80},1,ref written);
             //Debug.WriteLine("code.length="+code.Length);//code.length確認　
