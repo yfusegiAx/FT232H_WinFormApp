@@ -41,9 +41,9 @@ namespace FT232H_WinFormApp
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.buttonInit = new System.Windows.Forms.Button();
+            this.buttonStart = new System.Windows.Forms.Button();
+            this.buttonStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -63,35 +63,35 @@ namespace FT232H_WinFormApp
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button1
+            // buttonInit
             // 
-            this.button1.Location = new System.Drawing.Point(59, 375);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 42);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Initialize";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonInit.Location = new System.Drawing.Point(59, 375);
+            this.buttonInit.Name = "buttonInit";
+            this.buttonInit.Size = new System.Drawing.Size(100, 42);
+            this.buttonInit.TabIndex = 0;
+            this.buttonInit.Text = "Initialize";
+            this.buttonInit.UseVisualStyleBackColor = true;
+            this.buttonInit.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // buttonStart
             // 
-            this.button2.Location = new System.Drawing.Point(226, 377);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 41);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Start";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonStart.Location = new System.Drawing.Point(226, 377);
+            this.buttonStart.Name = "buttonStart";
+            this.buttonStart.Size = new System.Drawing.Size(105, 41);
+            this.buttonStart.TabIndex = 1;
+            this.buttonStart.Text = "Start";
+            this.buttonStart.UseVisualStyleBackColor = true;
+            this.buttonStart.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // buttonStop
             // 
-            this.button3.Location = new System.Drawing.Point(398, 377);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(109, 42);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Stop";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.buttonStop.Location = new System.Drawing.Point(398, 377);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(109, 42);
+            this.buttonStop.TabIndex = 2;
+            this.buttonStop.Text = "Stop";
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox1
             // 
@@ -239,9 +239,9 @@ namespace FT232H_WinFormApp
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonStop);
+            this.Controls.Add(this.buttonStart);
+            this.Controls.Add(this.buttonInit);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -257,9 +257,9 @@ namespace FT232H_WinFormApp
 
         #endregion
 
-        private Button button1;
-        private Button button2;
-        private Button button3;
+        private Button buttonInit;
+        private Button buttonStart;
+        private Button buttonStop;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private GroupBox groupBox3;

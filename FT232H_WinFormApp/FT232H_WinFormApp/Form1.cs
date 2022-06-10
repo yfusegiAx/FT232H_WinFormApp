@@ -22,7 +22,7 @@ namespace FT232H_WinFormApp
         //###################################################################################################################################
         //###################################################################################################################################
         //driverの定義
-        FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;//通信可能な状態
+        FTDI.FT_STATUS ftStatus;//通信可能な状態
 
         //FT232Hに命令を出すための宣言
 
@@ -126,7 +126,7 @@ namespace FT232H_WinFormApp
         //label1:interfaceの"status"
         //label2:interfaceのstatus表示
         //label3:interfaceの"proximity"
-        //label4:interfaceの"status"
+        //label_status:interfaceの"status"
         //label5:interfaceの"Red"
         //label6:interfaceのRedの値
         //label7:interfaceの"Green"
@@ -144,26 +144,25 @@ namespace FT232H_WinFormApp
             var stopwatch = new Stopwatch();
 
             uint written = 0;
-            uint bufnum = 0;
+       
             InitializeComponent();
             stopwatch.Start();//ランプ起動に何秒かかるか
 
-            myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
 
-            stopwatch.Stop();
+            //stopwatch.Stop();
 
-            var ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount番目にアクセスしたデバイスのステータスを返す
+            //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
+            status_name_label.Text = ftStatus.ToString();
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
-                status_name_label.Text = "ft_OK";
+                return;//error 終了
             }
-            else
-            {
-                status_name_label.Text = $"{ftStatus}";
-                Debug.WriteLine($"time ={stopwatch.ElapsedMilliseconds} [ms]");
-            }
-            myFtdiDevice.SetBitMode(0xFF,0x0);//setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
+            myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
+            //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
             //bitmode 0=reset 
+            //bitをマスクする＝bitを覆い隠す
+            //
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
             //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
 
@@ -175,37 +174,50 @@ namespace FT232H_WinFormApp
             code = new byte[] { 0x80, 0b11111111, 0xFF };
             myFtdiDevice.Write(code, code.Length, ref written);
             //Thread.Sleep(500);
-            
-            for (int i = 0; i < 100; i++)
+            /*
+            for (int i = 0; i < 10; i++)
             {
+
                 code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
                 myFtdiDevice.Write(code, code.Length, ref written);
                 Thread.Sleep(500);
-
+                Debug.WriteLine("code.length="+code.Length);//code.length確認　
+                Debug.WriteLine("written=" + written);//written確認　
+               
 
                 code = new byte[] { 0x80, 0b11111110, 0xFF };//3byte書き込まれる //adbus0~adbus6は１　adbus7は0 adbus0だけ接続している場合は点滅する
                 myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
 
                 Thread.Sleep(500);
             }
-            
+            */
 
             //myFtdiDevice.Write(new byte[] {0x80},1,ref written);
-            //Debug.WriteLine("code.length="+code.Length);//code.length確認　
-            //Debug.WriteLine("written=" + written);//written確認　
+           
             /*
            code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
            myFtdiDevice.Write(code, code.Length, ref written);
 
            code = new byte[] { 0x80, 0b11111111, 0xFF };
            myFtdiDevice.Write(code, code.Length, ref written);
-           */
-            myFtdiDevice.GetRxBytesAvailable(ref bufnum);
+            
+            code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
+            myFtdiDevice.Write(code, code.Length, ref written);
+
+            uint bufnum = 0;
 
             byte[] buf = new byte[bufnum];
+            myFtdiDevice.GetRxBytesAvailable(ref bufnum);//public GetRxBytesAvailable(uint32 &RxQueue) //読み込みのために利用可能なバイト数
+            //readで初めてカウントが始まる？
+            if (bufnum >= 0)
+            {
+                Debug.WriteLine("bufnum=" + $"{bufnum}");
+            }
+           */
+            
 
 
-            myFtdiDevice.Read(buf, 1,ref written);
+            //myFtdiDevice.Read(buf, 1,ref written);
 
         }
       
@@ -214,11 +226,7 @@ namespace FT232H_WinFormApp
         {
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+    
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -233,18 +241,84 @@ namespace FT232H_WinFormApp
         {
             //initializeボタン
             //デバイスの登録
+            bool DeviceInit = false;
+            buttonInit.Enabled = false;
+
+            try
+            {
+                ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//接続可能なデバイスの数を数える、返り値はFT_STATUS
+            }
+            catch
+            {
+                label_status.Text = "Driver not loaded";
+
+                buttonInit.Enabled = false;
+                buttonStart.Enabled = false;
+                buttonStop.Enabled = true;
+            }
+
+            myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+
+            // Update the Status text line
+            if (ftStatus == FTDI.FT_STATUS.FT_OK)//接続したデバイスのステータスの確認
+            {
+                DeviceOpen = true;
+                label_status.Text = "Open";
+            }
+            else
+            {
+                DeviceOpen = false;
+                label_status.Text = "No Device Found";
+            }
+            Refresh();
+            //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
+            Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
+                                   //実行ー＞新しいフォームの生成ー＞イベントの処理
+
+           
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             //startボタン
             //通信の開始
+            //クロックを送りデータも送る
+            //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
+            byte sendData = 0x00;//送るデータ
+            uint readOnlyBufNum = 0;//読み込み用バッファ
+
+             byte[] ftdiData= new byte[] { 0x10,0x00,0x00,sendData };//data output buffer :+VE時にクロックを送る、0~1byteのデータを送る、sendDataというデータを送る
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 書き込み
+
+            ftdiData = new byte[] { 0x24, 0x00, 0x00};//data input buffer :-VE時にクロックを送る、0~1byteのデータを送る
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込み
+
+            if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum)==FTDI.FT_STATUS.FT_OK)
+            {
+                Proximity_value.Text = "read clear!";
+            }
+
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             //stopボタン
             //通信終了
+            myFtdiDevice.Close();//openByIndexの逆
+            try
+            {
+                ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//接続可能なデバイスの数を数える、返り値はFT_STATUS
+            }
+            catch
+            {
+                label_status.Text = "Driver not loaded";
+
+                buttonInit.Enabled = false;
+                buttonStart.Enabled = false;
+                buttonStop.Enabled = true;
+            }
+
         }
     }
 }
