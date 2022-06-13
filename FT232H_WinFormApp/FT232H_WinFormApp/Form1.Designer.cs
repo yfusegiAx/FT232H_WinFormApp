@@ -45,22 +45,26 @@ namespace FT232H_WinFormApp
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.status_name_label = new System.Windows.Forms.Label();
-            this.label_status = new System.Windows.Forms.Label();
+            this.status_value = new System.Windows.Forms.Label();
+            this.status_label = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.Blue_value = new System.Windows.Forms.Label();
-            this.Blue_label = new System.Windows.Forms.Label();
-            this.Green_value = new System.Windows.Forms.Label();
-            this.Green_label = new System.Windows.Forms.Label();
-            this.Red_value = new System.Windows.Forms.Label();
-            this.Red_label = new System.Windows.Forms.Label();
-            this.Proximity_value = new System.Windows.Forms.Label();
-            this.Proximity_label = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.Pressure_value = new System.Windows.Forms.Label();
+            this.hectopascal_label = new System.Windows.Forms.Label();
+            this.Humidlity_value = new System.Windows.Forms.Label();
+            this.Humidlity_label = new System.Windows.Forms.Label();
+            this.Templature_value = new System.Windows.Forms.Label();
+            this.Templature_label = new System.Windows.Forms.Label();
+            this.Templature_degrees = new System.Windows.Forms.Label();
+            this.Humidity_percent = new System.Windows.Forms.Label();
+            this.hectopascal_hPa = new System.Windows.Forms.Label();
+            this.CommunicationMethod = new System.Windows.Forms.GroupBox();
+            this.ComMethod = new System.Windows.Forms.Label();
+            this.SPIRadioButton = new System.Windows.Forms.RadioButton();
+            this.I2CRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.CommunicationMethod.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonInit
@@ -95,147 +99,195 @@ namespace FT232H_WinFormApp
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Location = new System.Drawing.Point(73, 93);
+            this.groupBox1.Location = new System.Drawing.Point(73, 32);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(378, 179);
+            this.groupBox1.Size = new System.Drawing.Size(405, 316);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Display";
+            this.groupBox1.Text = "SSD1306";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(43, 45);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(236, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "Hello World";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.status_name_label);
-            this.groupBox2.Controls.Add(this.label_status);
-            this.groupBox2.Location = new System.Drawing.Point(503, 102);
+            this.groupBox2.Controls.Add(this.status_value);
+            this.groupBox2.Controls.Add(this.status_label);
+            this.groupBox2.Location = new System.Drawing.Point(506, 32);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(245, 67);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Interface";
             // 
-            // status_name_label
+            // status_value
             // 
-            this.status_name_label.AutoSize = true;
-            this.status_name_label.Location = new System.Drawing.Point(110, 26);
-            this.status_name_label.Name = "status_name_label";
-            this.status_name_label.Size = new System.Drawing.Size(42, 15);
-            this.status_name_label.TabIndex = 1;
-            this.status_name_label.Text = "Closed";
+            this.status_value.AutoSize = true;
+            this.status_value.Location = new System.Drawing.Point(110, 26);
+            this.status_value.Name = "status_value";
+            this.status_value.Size = new System.Drawing.Size(42, 15);
+            this.status_value.TabIndex = 1;
+            this.status_value.Text = "Closed";
             // 
-            // label_status
+            // status_label
             // 
-            this.label_status.AutoSize = true;
-            this.label_status.Location = new System.Drawing.Point(52, 26);
-            this.label_status.Name = "label_status";
-            this.label_status.Size = new System.Drawing.Size(39, 15);
-            this.label_status.TabIndex = 0;
-            this.label_status.Text = "Status";
-            this.label_status.Click += new System.EventHandler(this.label1_Click);
+            this.status_label.AutoSize = true;
+            this.status_label.Location = new System.Drawing.Point(52, 26);
+            this.status_label.Name = "status_label";
+            this.status_label.Size = new System.Drawing.Size(39, 15);
+            this.status_label.TabIndex = 0;
+            this.status_label.Text = "Status";
+            this.status_label.Click += new System.EventHandler(this.label1_Click);
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.Blue_value);
-            this.groupBox3.Controls.Add(this.Blue_label);
-            this.groupBox3.Controls.Add(this.Green_value);
-            this.groupBox3.Controls.Add(this.Green_label);
-            this.groupBox3.Controls.Add(this.Red_value);
-            this.groupBox3.Controls.Add(this.Red_label);
-            this.groupBox3.Controls.Add(this.Proximity_value);
-            this.groupBox3.Controls.Add(this.Proximity_label);
-            this.groupBox3.Location = new System.Drawing.Point(501, 193);
+            this.groupBox3.Controls.Add(this.hectopascal_hPa);
+            this.groupBox3.Controls.Add(this.Humidity_percent);
+            this.groupBox3.Controls.Add(this.Templature_degrees);
+            this.groupBox3.Controls.Add(this.Pressure_value);
+            this.groupBox3.Controls.Add(this.hectopascal_label);
+            this.groupBox3.Controls.Add(this.Humidlity_value);
+            this.groupBox3.Controls.Add(this.Humidlity_label);
+            this.groupBox3.Controls.Add(this.Templature_value);
+            this.groupBox3.Controls.Add(this.Templature_label);
+            this.groupBox3.Location = new System.Drawing.Point(506, 179);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(248, 131);
+            this.groupBox3.Size = new System.Drawing.Size(248, 169);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Sensors";
+            this.groupBox3.Text = "BME280 ";
+            this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
-            // Blue_value
+            // Pressure_value
             // 
-            this.Blue_value.AutoSize = true;
-            this.Blue_value.Location = new System.Drawing.Point(98, 107);
-            this.Blue_value.Name = "Blue_value";
-            this.Blue_value.Size = new System.Drawing.Size(13, 15);
-            this.Blue_value.TabIndex = 7;
-            this.Blue_value.Text = "0";
+            this.Pressure_value.AutoSize = true;
+            this.Pressure_value.Location = new System.Drawing.Point(160, 127);
+            this.Pressure_value.Name = "Pressure_value";
+            this.Pressure_value.Size = new System.Drawing.Size(13, 15);
+            this.Pressure_value.TabIndex = 5;
+            this.Pressure_value.Text = "0";
             // 
-            // Blue_label
+            // hectopascal_label
             // 
-            this.Blue_label.AutoSize = true;
-            this.Blue_label.Location = new System.Drawing.Point(54, 107);
-            this.Blue_label.Name = "Blue_label";
-            this.Blue_label.Size = new System.Drawing.Size(30, 15);
-            this.Blue_label.TabIndex = 6;
-            this.Blue_label.Text = "Blue";
+            this.hectopascal_label.AutoSize = true;
+            this.hectopascal_label.Location = new System.Drawing.Point(52, 127);
+            this.hectopascal_label.Name = "hectopascal_label";
+            this.hectopascal_label.Size = new System.Drawing.Size(70, 15);
+            this.hectopascal_label.TabIndex = 4;
+            this.hectopascal_label.Text = "hectopascal";
             // 
-            // Green_value
+            // Humidlity_value
             // 
-            this.Green_value.AutoSize = true;
-            this.Green_value.Location = new System.Drawing.Point(98, 77);
-            this.Green_value.Name = "Green_value";
-            this.Green_value.Size = new System.Drawing.Size(13, 15);
-            this.Green_value.TabIndex = 5;
-            this.Green_value.Text = "0";
+            this.Humidlity_value.AutoSize = true;
+            this.Humidlity_value.Location = new System.Drawing.Point(158, 77);
+            this.Humidlity_value.Name = "Humidlity_value";
+            this.Humidlity_value.Size = new System.Drawing.Size(13, 15);
+            this.Humidlity_value.TabIndex = 3;
+            this.Humidlity_value.Text = "0";
             // 
-            // Green_label
+            // Humidlity_label
             // 
-            this.Green_label.AutoSize = true;
-            this.Green_label.Location = new System.Drawing.Point(54, 77);
-            this.Green_label.Name = "Green_label";
-            this.Green_label.Size = new System.Drawing.Size(38, 15);
-            this.Green_label.TabIndex = 4;
-            this.Green_label.Text = "Green";
+            this.Humidlity_label.AutoSize = true;
+            this.Humidlity_label.Location = new System.Drawing.Point(54, 77);
+            this.Humidlity_label.Name = "Humidlity_label";
+            this.Humidlity_label.Size = new System.Drawing.Size(59, 15);
+            this.Humidlity_label.TabIndex = 2;
+            this.Humidlity_label.Text = "Humidlity";
             // 
-            // Red_value
+            // Templature_value
             // 
-            this.Red_value.AutoSize = true;
-            this.Red_value.Location = new System.Drawing.Point(98, 53);
-            this.Red_value.Name = "Red_value";
-            this.Red_value.Size = new System.Drawing.Size(13, 15);
-            this.Red_value.TabIndex = 3;
-            this.Red_value.Text = "0";
+            this.Templature_value.AutoSize = true;
+            this.Templature_value.Location = new System.Drawing.Point(158, 30);
+            this.Templature_value.Name = "Templature_value";
+            this.Templature_value.Size = new System.Drawing.Size(13, 15);
+            this.Templature_value.TabIndex = 1;
+            this.Templature_value.Text = "0";
             // 
-            // Red_label
+            // Templature_label
             // 
-            this.Red_label.AutoSize = true;
-            this.Red_label.Location = new System.Drawing.Point(54, 53);
-            this.Red_label.Name = "Red_label";
-            this.Red_label.Size = new System.Drawing.Size(27, 15);
-            this.Red_label.TabIndex = 2;
-            this.Red_label.Text = "Red";
+            this.Templature_label.AutoSize = true;
+            this.Templature_label.Location = new System.Drawing.Point(54, 30);
+            this.Templature_label.Name = "Templature_label";
+            this.Templature_label.Size = new System.Drawing.Size(65, 15);
+            this.Templature_label.TabIndex = 0;
+            this.Templature_label.Text = "Templature";
             // 
-            // Proximity_value
+            // Templature_degrees
             // 
-            this.Proximity_value.AutoSize = true;
-            this.Proximity_value.Location = new System.Drawing.Point(98, 30);
-            this.Proximity_value.Name = "Proximity_value";
-            this.Proximity_value.Size = new System.Drawing.Size(13, 15);
-            this.Proximity_value.TabIndex = 1;
-            this.Proximity_value.Text = "0";
+            this.Templature_degrees.AutoSize = true;
+            this.Templature_degrees.Location = new System.Drawing.Point(177, 30);
+            this.Templature_degrees.Name = "Templature_degrees";
+            this.Templature_degrees.Size = new System.Drawing.Size(19, 15);
+            this.Templature_degrees.TabIndex = 6;
+            this.Templature_degrees.Text = "℃";
             // 
-            // Proximity_label
+            // Humidity_percent
             // 
-            this.Proximity_label.AutoSize = true;
-            this.Proximity_label.Location = new System.Drawing.Point(54, 30);
-            this.Proximity_label.Name = "Proximity_label";
-            this.Proximity_label.Size = new System.Drawing.Size(57, 15);
-            this.Proximity_label.TabIndex = 0;
-            this.Proximity_label.Text = "Proximity";
+            this.Humidity_percent.AutoSize = true;
+            this.Humidity_percent.Location = new System.Drawing.Point(179, 77);
+            this.Humidity_percent.Name = "Humidity_percent";
+            this.Humidity_percent.Size = new System.Drawing.Size(17, 15);
+            this.Humidity_percent.TabIndex = 7;
+            this.Humidity_percent.Text = "%";
+            // 
+            // hectopascal_hPa
+            // 
+            this.hectopascal_hPa.AutoSize = true;
+            this.hectopascal_hPa.Location = new System.Drawing.Point(179, 127);
+            this.hectopascal_hPa.Name = "hectopascal_hPa";
+            this.hectopascal_hPa.Size = new System.Drawing.Size(27, 15);
+            this.hectopascal_hPa.TabIndex = 8;
+            this.hectopascal_hPa.Text = "hPa";
+            // 
+            // CommunicationMethod
+            // 
+            this.CommunicationMethod.Controls.Add(this.I2CRadioButton);
+            this.CommunicationMethod.Controls.Add(this.SPIRadioButton);
+            this.CommunicationMethod.Controls.Add(this.ComMethod);
+            this.CommunicationMethod.Location = new System.Drawing.Point(506, 114);
+            this.CommunicationMethod.Name = "CommunicationMethod";
+            this.CommunicationMethod.Size = new System.Drawing.Size(248, 59);
+            this.CommunicationMethod.TabIndex = 6;
+            this.CommunicationMethod.TabStop = false;
+            this.CommunicationMethod.Text = "CommunicationMethod";
+            // 
+            // ComMethod
+            // 
+            this.ComMethod.AutoSize = true;
+            this.ComMethod.Location = new System.Drawing.Point(52, 28);
+            this.ComMethod.Name = "ComMethod";
+            this.ComMethod.Size = new System.Drawing.Size(55, 15);
+            this.ComMethod.TabIndex = 0;
+            this.ComMethod.Text = "Method :";
+            // 
+            // SPIRadioButton
+            // 
+            this.SPIRadioButton.AutoSize = true;
+            this.SPIRadioButton.Location = new System.Drawing.Point(110, 26);
+            this.SPIRadioButton.Name = "SPIRadioButton";
+            this.SPIRadioButton.Size = new System.Drawing.Size(41, 19);
+            this.SPIRadioButton.TabIndex = 1;
+            this.SPIRadioButton.TabStop = true;
+            this.SPIRadioButton.Text = "SPI";
+            this.SPIRadioButton.UseVisualStyleBackColor = true;
+            this.SPIRadioButton.CheckedChanged += new System.EventHandler(this.SPIRadioButton_CheckedChanged);
+            // 
+            // I2CRadioButton
+            // 
+            this.I2CRadioButton.AutoSize = true;
+            this.I2CRadioButton.Location = new System.Drawing.Point(154, 26);
+            this.I2CRadioButton.Name = "I2CRadioButton";
+            this.I2CRadioButton.Size = new System.Drawing.Size(41, 19);
+            this.I2CRadioButton.TabIndex = 2;
+            this.I2CRadioButton.TabStop = true;
+            this.I2CRadioButton.Text = "I2C";
+            this.I2CRadioButton.UseVisualStyleBackColor = true;
+            this.I2CRadioButton.CheckedChanged += new System.EventHandler(this.I2CRadioButton_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.CommunicationMethod);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -245,12 +297,12 @@ namespace FT232H_WinFormApp
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.CommunicationMethod.ResumeLayout(false);
+            this.CommunicationMethod.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -263,16 +315,20 @@ namespace FT232H_WinFormApp
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
-        private TextBox textBox1;
-        private Label status_name_label;
-        private Label label_status;
-        private Label Blue_value;
-        private Label Blue_label;
-        private Label Green_value;
-        private Label Green_label;
-        private Label Red_value;
-        private Label Red_label;
-        private Label Proximity_value;
-        private Label Proximity_label;
+        private Label status_value;
+        private Label status_label;
+        private Label Pressure_value;
+        private Label hectopascal_label;
+        private Label Humidlity_value;
+        private Label Humidlity_label;
+        private Label Templature_value;
+        private Label Templature_label;
+        private Label hectopascal_hPa;
+        private Label Humidity_percent;
+        private Label Templature_degrees;
+        private GroupBox CommunicationMethod;
+        private Label ComMethod;
+        private RadioButton I2CRadioButton;
+        private RadioButton SPIRadioButton;
     }
 }

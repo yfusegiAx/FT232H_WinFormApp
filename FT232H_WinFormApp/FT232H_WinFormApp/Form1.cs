@@ -153,11 +153,12 @@ namespace FT232H_WinFormApp
             //stopwatch.Stop();
 
             //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
-            status_name_label.Text = ftStatus.ToString();
+            status_value.Text = ftStatus.ToString();
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 return;//error 終了
             }
+           
             myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
             //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
             //bitmode 0=reset 
@@ -171,9 +172,12 @@ namespace FT232H_WinFormApp
 
             //code_list.Count;
 
-            code = new byte[] { 0x80, 0b11111111, 0xFF };
-            myFtdiDevice.Write(code, code.Length, ref written);
+            code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7にすべてフラグを立てている
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+
             //Thread.Sleep(500);
+            
+            //ランプを10回点滅させるテスト
             /*
             for (int i = 0; i < 10; i++)
             {
@@ -247,10 +251,11 @@ namespace FT232H_WinFormApp
             try
             {
                 ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//接続可能なデバイスの数を数える、返り値はFT_STATUS
+
             }
             catch
             {
-                label_status.Text = "Driver not loaded";
+                status_value.Text = "Driver not loaded";
 
                 buttonInit.Enabled = false;
                 buttonStart.Enabled = false;
@@ -263,14 +268,14 @@ namespace FT232H_WinFormApp
             if (ftStatus == FTDI.FT_STATUS.FT_OK)//接続したデバイスのステータスの確認
             {
                 DeviceOpen = true;
-                label_status.Text = "Open";
+                status_value.Text = "Open";
             }
             else
             {
                 DeviceOpen = false;
-                label_status.Text = "No Device Found";
+                status_value.Text = "No Device Found";
             }
-            Refresh();
+            Refresh();//Updateより広範囲の再描画 ただし遅い
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
@@ -292,11 +297,12 @@ namespace FT232H_WinFormApp
             myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 書き込み
 
             ftdiData = new byte[] { 0x24, 0x00, 0x00};//data input buffer :-VE時にクロックを送る、0~1byteのデータを送る
-            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込み
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込み readonlybufnumには読み込めたバイト数が格納されている?
 
             if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum)==FTDI.FT_STATUS.FT_OK)
             {
-                Proximity_value.Text = "read clear!";
+                Templature_value.Text = "read clear!";
+                MessageBox.Show($"readonlybufnum={readOnlyBufNum}");
             }
 
         }
@@ -312,12 +318,28 @@ namespace FT232H_WinFormApp
             }
             catch
             {
-                label_status.Text = "Driver not loaded";
+                status_value.Text = "Driver not loaded";
 
                 buttonInit.Enabled = false;
                 buttonStart.Enabled = false;
                 buttonStop.Enabled = true;
             }
+            Application.Exit();
+
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SPIRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void I2CRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
 
         }
     }
