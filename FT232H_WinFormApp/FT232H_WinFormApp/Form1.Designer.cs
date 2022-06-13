@@ -49,19 +49,19 @@ namespace FT232H_WinFormApp
             this.status_value = new System.Windows.Forms.Label();
             this.status_label = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.Pressure_value = new System.Windows.Forms.Label();
-            this.hectopascal_label = new System.Windows.Forms.Label();
+            this.hectopascal_hPa = new System.Windows.Forms.Label();
+            this.Humidity_percent = new System.Windows.Forms.Label();
+            this.Templature_degrees = new System.Windows.Forms.Label();
+            this.Hectpascal_value = new System.Windows.Forms.Label();
+            this.Hectopascal_label = new System.Windows.Forms.Label();
             this.Humidlity_value = new System.Windows.Forms.Label();
             this.Humidlity_label = new System.Windows.Forms.Label();
             this.Templature_value = new System.Windows.Forms.Label();
             this.Templature_label = new System.Windows.Forms.Label();
-            this.Templature_degrees = new System.Windows.Forms.Label();
-            this.Humidity_percent = new System.Windows.Forms.Label();
-            this.hectopascal_hPa = new System.Windows.Forms.Label();
             this.CommunicationMethod = new System.Windows.Forms.GroupBox();
-            this.ComMethod = new System.Windows.Forms.Label();
-            this.SPIRadioButton = new System.Windows.Forms.RadioButton();
             this.I2CRadioButton = new System.Windows.Forms.RadioButton();
+            this.SPIRadioButton = new System.Windows.Forms.RadioButton();
+            this.ComMethod = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
@@ -142,8 +142,8 @@ namespace FT232H_WinFormApp
             this.groupBox3.Controls.Add(this.hectopascal_hPa);
             this.groupBox3.Controls.Add(this.Humidity_percent);
             this.groupBox3.Controls.Add(this.Templature_degrees);
-            this.groupBox3.Controls.Add(this.Pressure_value);
-            this.groupBox3.Controls.Add(this.hectopascal_label);
+            this.groupBox3.Controls.Add(this.Hectpascal_value);
+            this.groupBox3.Controls.Add(this.Hectopascal_label);
             this.groupBox3.Controls.Add(this.Humidlity_value);
             this.groupBox3.Controls.Add(this.Humidlity_label);
             this.groupBox3.Controls.Add(this.Templature_value);
@@ -156,23 +156,50 @@ namespace FT232H_WinFormApp
             this.groupBox3.Text = "BME280 ";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
-            // Pressure_value
+            // hectopascal_hPa
             // 
-            this.Pressure_value.AutoSize = true;
-            this.Pressure_value.Location = new System.Drawing.Point(160, 127);
-            this.Pressure_value.Name = "Pressure_value";
-            this.Pressure_value.Size = new System.Drawing.Size(13, 15);
-            this.Pressure_value.TabIndex = 5;
-            this.Pressure_value.Text = "0";
+            this.hectopascal_hPa.AutoSize = true;
+            this.hectopascal_hPa.Location = new System.Drawing.Point(202, 127);
+            this.hectopascal_hPa.Name = "hectopascal_hPa";
+            this.hectopascal_hPa.Size = new System.Drawing.Size(27, 15);
+            this.hectopascal_hPa.TabIndex = 8;
+            this.hectopascal_hPa.Text = "hPa";
             // 
-            // hectopascal_label
+            // Humidity_percent
             // 
-            this.hectopascal_label.AutoSize = true;
-            this.hectopascal_label.Location = new System.Drawing.Point(52, 127);
-            this.hectopascal_label.Name = "hectopascal_label";
-            this.hectopascal_label.Size = new System.Drawing.Size(70, 15);
-            this.hectopascal_label.TabIndex = 4;
-            this.hectopascal_label.Text = "hectopascal";
+            this.Humidity_percent.AutoSize = true;
+            this.Humidity_percent.Location = new System.Drawing.Point(202, 77);
+            this.Humidity_percent.Name = "Humidity_percent";
+            this.Humidity_percent.Size = new System.Drawing.Size(17, 15);
+            this.Humidity_percent.TabIndex = 7;
+            this.Humidity_percent.Text = "%";
+            // 
+            // Templature_degrees
+            // 
+            this.Templature_degrees.AutoSize = true;
+            this.Templature_degrees.Location = new System.Drawing.Point(202, 30);
+            this.Templature_degrees.Name = "Templature_degrees";
+            this.Templature_degrees.Size = new System.Drawing.Size(19, 15);
+            this.Templature_degrees.TabIndex = 6;
+            this.Templature_degrees.Text = "℃";
+            // 
+            // Hectpascal_value
+            // 
+            this.Hectpascal_value.AutoSize = true;
+            this.Hectpascal_value.Location = new System.Drawing.Point(160, 127);
+            this.Hectpascal_value.Name = "Hectpascal_value";
+            this.Hectpascal_value.Size = new System.Drawing.Size(13, 15);
+            this.Hectpascal_value.TabIndex = 5;
+            this.Hectpascal_value.Text = "0";
+            // 
+            // Hectopascal_label
+            // 
+            this.Hectopascal_label.AutoSize = true;
+            this.Hectopascal_label.Location = new System.Drawing.Point(52, 127);
+            this.Hectopascal_label.Name = "Hectopascal_label";
+            this.Hectopascal_label.Size = new System.Drawing.Size(70, 15);
+            this.Hectopascal_label.TabIndex = 4;
+            this.Hectopascal_label.Text = "hectopascal";
             // 
             // Humidlity_value
             // 
@@ -210,33 +237,6 @@ namespace FT232H_WinFormApp
             this.Templature_label.TabIndex = 0;
             this.Templature_label.Text = "Templature";
             // 
-            // Templature_degrees
-            // 
-            this.Templature_degrees.AutoSize = true;
-            this.Templature_degrees.Location = new System.Drawing.Point(177, 30);
-            this.Templature_degrees.Name = "Templature_degrees";
-            this.Templature_degrees.Size = new System.Drawing.Size(19, 15);
-            this.Templature_degrees.TabIndex = 6;
-            this.Templature_degrees.Text = "℃";
-            // 
-            // Humidity_percent
-            // 
-            this.Humidity_percent.AutoSize = true;
-            this.Humidity_percent.Location = new System.Drawing.Point(179, 77);
-            this.Humidity_percent.Name = "Humidity_percent";
-            this.Humidity_percent.Size = new System.Drawing.Size(17, 15);
-            this.Humidity_percent.TabIndex = 7;
-            this.Humidity_percent.Text = "%";
-            // 
-            // hectopascal_hPa
-            // 
-            this.hectopascal_hPa.AutoSize = true;
-            this.hectopascal_hPa.Location = new System.Drawing.Point(179, 127);
-            this.hectopascal_hPa.Name = "hectopascal_hPa";
-            this.hectopascal_hPa.Size = new System.Drawing.Size(27, 15);
-            this.hectopascal_hPa.TabIndex = 8;
-            this.hectopascal_hPa.Text = "hPa";
-            // 
             // CommunicationMethod
             // 
             this.CommunicationMethod.Controls.Add(this.I2CRadioButton);
@@ -249,14 +249,17 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.TabStop = false;
             this.CommunicationMethod.Text = "CommunicationMethod";
             // 
-            // ComMethod
+            // I2CRadioButton
             // 
-            this.ComMethod.AutoSize = true;
-            this.ComMethod.Location = new System.Drawing.Point(52, 28);
-            this.ComMethod.Name = "ComMethod";
-            this.ComMethod.Size = new System.Drawing.Size(55, 15);
-            this.ComMethod.TabIndex = 0;
-            this.ComMethod.Text = "Method :";
+            this.I2CRadioButton.AutoSize = true;
+            this.I2CRadioButton.Location = new System.Drawing.Point(154, 26);
+            this.I2CRadioButton.Name = "I2CRadioButton";
+            this.I2CRadioButton.Size = new System.Drawing.Size(41, 19);
+            this.I2CRadioButton.TabIndex = 2;
+            this.I2CRadioButton.TabStop = true;
+            this.I2CRadioButton.Text = "I2C";
+            this.I2CRadioButton.UseVisualStyleBackColor = true;
+            this.I2CRadioButton.CheckedChanged += new System.EventHandler(this.I2CRadioButton_CheckedChanged);
             // 
             // SPIRadioButton
             // 
@@ -270,17 +273,14 @@ namespace FT232H_WinFormApp
             this.SPIRadioButton.UseVisualStyleBackColor = true;
             this.SPIRadioButton.CheckedChanged += new System.EventHandler(this.SPIRadioButton_CheckedChanged);
             // 
-            // I2CRadioButton
+            // ComMethod
             // 
-            this.I2CRadioButton.AutoSize = true;
-            this.I2CRadioButton.Location = new System.Drawing.Point(154, 26);
-            this.I2CRadioButton.Name = "I2CRadioButton";
-            this.I2CRadioButton.Size = new System.Drawing.Size(41, 19);
-            this.I2CRadioButton.TabIndex = 2;
-            this.I2CRadioButton.TabStop = true;
-            this.I2CRadioButton.Text = "I2C";
-            this.I2CRadioButton.UseVisualStyleBackColor = true;
-            this.I2CRadioButton.CheckedChanged += new System.EventHandler(this.I2CRadioButton_CheckedChanged);
+            this.ComMethod.AutoSize = true;
+            this.ComMethod.Location = new System.Drawing.Point(52, 28);
+            this.ComMethod.Name = "ComMethod";
+            this.ComMethod.Size = new System.Drawing.Size(55, 15);
+            this.ComMethod.TabIndex = 0;
+            this.ComMethod.Text = "Method :";
             // 
             // Form1
             // 
@@ -317,8 +317,8 @@ namespace FT232H_WinFormApp
         private GroupBox groupBox3;
         private Label status_value;
         private Label status_label;
-        private Label Pressure_value;
-        private Label hectopascal_label;
+        private Label Hectpascal_value;
+        private Label Hectopascal_label;
         private Label Humidlity_value;
         private Label Humidlity_label;
         private Label Templature_value;

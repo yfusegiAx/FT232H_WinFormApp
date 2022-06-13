@@ -143,7 +143,6 @@ namespace FT232H_WinFormApp
         {
             var stopwatch = new Stopwatch();
 
-            uint written = 0;
        
             InitializeComponent();
             stopwatch.Start();//ランプ起動に何秒かかるか
@@ -167,14 +166,7 @@ namespace FT232H_WinFormApp
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
             //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
 
-            byte[] code;
-            //List<byte> code_list = new List<byte>();//Listだと遅い
-
-            //code_list.Count;
-
-            code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7にすべてフラグを立てている
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
-
+           
             //Thread.Sleep(500);
             
             //ランプを10回点滅させるテスト
@@ -290,20 +282,49 @@ namespace FT232H_WinFormApp
             //通信の開始
             //クロックを送りデータも送る
             //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
-            byte sendData = 0x00;//送るデータ
+            byte sendData = 0x88;//送るデータ
             uint readOnlyBufNum = 0;//読み込み用バッファ
+            byte[] code;
+            uint written = 0;
+            //List<byte> code_list = new List<byte>();//Listだと遅い
 
-             byte[] ftdiData= new byte[] { 0x10,0x00,0x00,sendData };//data output buffer :+VE時にクロックを送る、0~1byteのデータを送る、sendDataというデータを送る
+            //code_list.Count;
+            //                          Value     Direction 
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//adbus0~adbus7にすべてフラグを立てている
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+
+            code = new byte[] { 0x80, 0b11110011, 0b11111011 };//
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+
+            code = new byte[] { 0x80, 0b11110000, 0b11111011 };//
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+
+
+            byte[] ftdiData= new byte[] { 0x11,0x00,0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送る
             myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 書き込み
+            
+            ftdiData = new byte[] { 0x20, 0x77, 0x00};//data input buffer :-VE時にクロックを送る、1byteのデータを送る この時点ではクロックは出ていない
 
-            ftdiData = new byte[] { 0x24, 0x00, 0x00};//data input buffer :-VE時にクロックを送る、0~1byteのデータを送る
-            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込み readonlybufnumには読み込めたバイト数が格納されている?
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込みのためのデータの送信が起きる readonlybufnumには読み込めたバイト数が格納されている?
+            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
 
             if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum)==FTDI.FT_STATUS.FT_OK)
             {
-                Templature_value.Text = "read clear!";
-                MessageBox.Show($"readonlybufnum={readOnlyBufNum}");
+                Templature_value.Text = "${@}";//BME280で取得した値の表示：温度
+                Humidlity_value.Text = "${@}";//BME280で取得した値の表示：湿度
+                Hectpascal_value.Text = "${@}";//BME280で取得した値の表示：気圧
+                Debug.WriteLine($"readonlybufnum={readOnlyBufNum}");
+                byte[] readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列
+                myFtdiDevice.Read(readData,readOnlyBufNum,ref readOnlyBufNum);//ここで読み込む？ byte dataBuffer,uint numBytesToRead,ref uint numBytesRead
+                                                                              //デバイスから読み込まれたデータを移植されたバイト配列(ここにデータが入る、空でいい),デバイスから要求されたバイト数,実際読み込まれるバイト数
+                Debug.WriteLine($"readData = 0x{readData[0]:X02}");
+
             }
+
+            code = new byte[] { 0x80, 0b11111110, 0b11111011 };
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
 
         }
 
@@ -324,7 +345,8 @@ namespace FT232H_WinFormApp
                 buttonStart.Enabled = false;
                 buttonStop.Enabled = true;
             }
-            Application.Exit();
+            Thread.Sleep(1000);
+            Application.Exit();//アプリケーションの終了
 
         }
 
