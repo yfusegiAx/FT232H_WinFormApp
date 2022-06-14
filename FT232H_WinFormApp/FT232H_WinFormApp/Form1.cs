@@ -16,123 +16,16 @@ namespace FT232H_WinFormApp
 {
     public partial class Form1 : Form
     {
-        //###################################################################################################################################
-        //###################################################################################################################################
-        //##################                                      Definitions                                           #####################
-        //###################################################################################################################################
-        //###################################################################################################################################
+       
         //driverの定義
         FTDI.FT_STATUS ftStatus;//通信可能な状態
 
-        //FT232Hに命令を出すための宣言
-
-        // ###### I2C Library defines ######
-        const byte I2C_Dir_SDAin_SCLin = 0x00;
-        const byte I2C_Dir_SDAin_SCLout = 0x01;
-        const byte I2C_Dir_SDAout_SCLout = 0x03;
-        const byte I2C_Dir_SDAout_SCLin = 0x02;
-        const byte I2C_Data_SDAhi_SCLhi = 0x03;
-        const byte I2C_Data_SDAlo_SCLhi = 0x01;
-        const byte I2C_Data_SDAlo_SCLlo = 0x00;
-        const byte I2C_Data_SDAhi_SCLlo = 0x02;
-
-        // MPSSE clocking commands
-        const byte MSB_FALLING_EDGE_CLOCK_BYTE_IN = 0x24;
-        const byte MSB_RISING_EDGE_CLOCK_BYTE_IN = 0x20;
-        const byte MSB_FALLING_EDGE_CLOCK_BYTE_OUT = 0x11;
-        const byte MSB_DOWN_EDGE_CLOCK_BIT_IN = 0x26;
-        const byte MSB_UP_EDGE_CLOCK_BYTE_IN = 0x20;
-        const byte MSB_UP_EDGE_CLOCK_BYTE_OUT = 0x10;
-        const byte MSB_RISING_EDGE_CLOCK_BIT_IN = 0x22;
-        const byte MSB_FALLING_EDGE_CLOCK_BIT_OUT = 0x13;
-
-        // Clock
-        const uint ClockDivisor = 49;      //          = 199;// for 100KHz
-        // Sending and receiving
-        static uint NumBytesToSend = 0;
-        static uint NumBytesToRead = 0;
-        uint NumBytesSent = 0;
-        static uint NumBytesRead = 0;
-        static byte[] MPSSEbuffer = new byte[500];
-        static byte[] InputBuffer = new byte[500];
-        static byte[] InputBuffer2 = new byte[500];
-        static uint BytesAvailable = 0;
-        static bool I2C_Ack = false;
-        static byte AppStatus = 0;
-        static byte I2C_Status = 0;
-        public bool Running = true;
-        static bool DeviceOpen = false;
-        // GPIO
-        static byte GPIO_Low_Dat = 0;
-        static byte GPIO_Low_Dir = 0;
-        static byte ADbusReadVal = 0;
-        static byte ACbusReadVal = 0;
-
-        // ###### Proximity sensor defines ######
-        static byte Command = 0x00;
-        static byte[] ProxData = new byte[500];
-        static UInt16 ProxiValue = 0;
-        static double ProxiValueD = 0;
-        public const byte VCNL40x0_ADDRESS = 0x13;//0x13 is 7 bit address, 0x26 is 8bit address
-        // registers
-        public const byte REGISTER_COMMAND = 0x80;
-        public const byte REGISTER_ID = 0x81;
-        public const byte REGISTER_PROX_RATE = 0x82;
-        public const byte REGISTER_PROX_CURRENT = 0x83;
-        public const byte REGISTER_AMBI_PARAMETER = 0x84;
-        public const byte REGISTER_AMBI_VALUE = 0x85;
-        public const byte REGISTER_PROX_VALUE = 0x87;
-        public const byte REGISTER_INTERRUPT_CONTROL = 0x89;
-        public const byte REGISTER_INTERRUPT_LOW_THRES = 0x8a;
-        public const byte REGISTER_INTERRUPT_HIGH_THRES = 0x8c;
-        public const byte REGISTER_INTERRUPT_STATUS = 0x8e;
-        public const byte REGISTER_PROX_TIMING = 0xf9;
-        // Bits in the registers defined above
-        public const byte COMMAND_SELFTIMED_MODE_ENABLE = 0x01;
-        public const byte COMMAND_PROX_ENABLE = 0x02;
-        public const byte COMMAND_AMBI_ENABLE = 0x04;
-        public const byte COMMAND_MASK_PROX_DATA_READY = 0x20;
-        public const byte PROX_MEASUREMENT_RATE_31 = 0x04;
-        public const byte AMBI_PARA_AVERAGE_32 = 0x05; // DEFAULT
-        public const byte AMBI_PARA_AUTO_OFFSET_ENABLE = 0x08; // DEFAULT enable
-        public const byte AMBI_PARA_MEAS_RATE_2 = 0x10; // DEFAULT
-        public const byte INTERRUPT_THRES_SEL_PROX = 0x00;
-        public const byte INTERRUPT_THRES_ENABLE = 0x02;
-        public const byte INTERRUPT_COUNT_EXCEED_1 = 0x00; // DEFAULT
-
-        // ###### Colour sensor defines ######
-        public const byte COLOR_ADDRESS = 0x29;
-        public const byte _ENABLE = 0x80;                   //Enablestatusandinterrupts
-        public const byte _ATIME = 0x81;                    //RGBCADCtime
-        public const byte _CONTROL = 0x8F;                  //Gaincontrolregister
-        public const byte _GAIN_x4 = 0x01;
-        public const byte _GAIN_x16 = 0x10;
-        public const byte _GAIN_x60 = 0x11;
-        static byte Global_Red = 0;
-        static byte Global_Green = 0;
-        static byte Global_Blue = 0;
         uint deviceCount = 0;
-
-        //###################################################################################################################################
-        //###################################################################################################################################
-        //##################                          Main Application Layer                                            #####################
-        //###################################################################################################################################
-        //###################################################################################################################################
 
         // Create new instance of the FTDI device class
         //FTDIデバイスクラスのインスタンス生成
         //デバイスクラス..usbインターフェースが所持している製品情報
 
-        //label1:interfaceの"status"
-        //label2:interfaceのstatus表示
-        //label3:interfaceの"proximity"
-        //label_status:interfaceの"status"
-        //label5:interfaceの"Red"
-        //label6:interfaceのRedの値
-        //label7:interfaceの"Green"
-        //label8:interfaceのGreenの値
-        //label9:interfaceの"Blue"
-        //label10:interfaceのBlueの値
 
         FTDI myFtdiDevice = new FTDI();
 
@@ -259,12 +152,10 @@ namespace FT232H_WinFormApp
             // Update the Status text line
             if (ftStatus == FTDI.FT_STATUS.FT_OK)//接続したデバイスのステータスの確認
             {
-                DeviceOpen = true;
                 status_value.Text = "Open";
             }
             else
             {
-                DeviceOpen = false;
                 status_value.Text = "No Device Found";
             }
             Refresh();//Updateより広範囲の再描画 ただし遅い
@@ -276,12 +167,28 @@ namespace FT232H_WinFormApp
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newval"></param>
+        /// <param name="oldval"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
+        //フィルタが無い場合に実装する関数
+　　　　/*
+        double MMA(double newval, double  oldval, int N)
+        {
+            return ((N - 1) * oldval + newval)/ N;
+        }
+       */
+
         private void button2_Click(object sender, EventArgs e)
         {
             //startボタン
             //通信の開始
             //クロックを送りデータも送る
             //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
+
             byte sendData = 0x88;//送るデータ
             uint readOnlyBufNum = 0;//読み込み用バッファ
             byte[] code;
@@ -290,41 +197,39 @@ namespace FT232H_WinFormApp
 
             //code_list.Count;
             //                          Value     Direction 
-            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//adbus0~adbus7にすべてフラグを立てている
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
-            code = new byte[] { 0x80, 0b11110011, 0b11111011 };//
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+            code = new byte[] { 0x80, 0b11110111, 0b11111011 };//adbus2をlowにすることで通信したいスレーブを選択できるようになる
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
-            code = new byte[] { 0x80, 0b11110000, 0b11111011 };//
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+            code = new byte[] { 0x80, 0b11110110, 0b11111011 };//adbus0=0にする クロックを送るため
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
 
             byte[] ftdiData= new byte[] { 0x11,0x00,0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送る
             myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 書き込み
             
             ftdiData = new byte[] { 0x20, 0x77, 0x00};//data input buffer :-VE時にクロックを送る、1byteのデータを送る この時点ではクロックは出ていない
-
-            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込みのためのデータの送信が起きる readonlybufnumには読み込めたバイト数が格納されている?
-            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込みのためのデータの送信が起きる 
+            Thread.Sleep(2);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
 
             if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum)==FTDI.FT_STATUS.FT_OK)
             {
+                code = new byte[] { 0x80, 0b11111110, 0b11111011 };
+                myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
+                code = new byte[] { 0x80, 0b11111111, 0b11111011 };
+                myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
                 Templature_value.Text = "${@}";//BME280で取得した値の表示：温度
                 Humidlity_value.Text = "${@}";//BME280で取得した値の表示：湿度
                 Hectpascal_value.Text = "${@}";//BME280で取得した値の表示：気圧
                 Debug.WriteLine($"readonlybufnum={readOnlyBufNum}");
                 byte[] readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列
-                myFtdiDevice.Read(readData,readOnlyBufNum,ref readOnlyBufNum);//ここで読み込む？ byte dataBuffer,uint numBytesToRead,ref uint numBytesRead
-                                                                              //デバイスから読み込まれたデータを移植されたバイト配列(ここにデータが入る、空でいい),デバイスから要求されたバイト数,実際読み込まれるバイト数
+                myFtdiDevice.Read(readData,readOnlyBufNum,ref readOnlyBufNum);//ここで読み込む byte[] dataBuffer,uint numBytesToRead,ref uint numBytesRead
+                                                                              //データを格納するバッファ、デバイスから要求されたバイト数、実際読み込まれるバイト数
                 Debug.WriteLine($"readData = 0x{readData[0]:X02}");
 
             }
-
-            code = new byte[] { 0x80, 0b11111110, 0b11111011 };
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
-            code = new byte[] { 0x80, 0b11111111, 0b11111011 };
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
 
         }
 
@@ -357,12 +262,13 @@ namespace FT232H_WinFormApp
 
         private void SPIRadioButton_CheckedChanged(object sender, EventArgs e)
         {
+            //SPI通信を始める
 
         }
 
         private void I2CRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-
+            //I2C通信を始める
         }
     }
 }
