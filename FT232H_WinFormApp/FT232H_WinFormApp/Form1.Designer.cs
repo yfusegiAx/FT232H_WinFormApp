@@ -45,6 +45,7 @@ namespace FT232H_WinFormApp
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.status_value = new System.Windows.Forms.Label();
             this.status_label = new System.Windows.Forms.Label();
@@ -52,8 +53,8 @@ namespace FT232H_WinFormApp
             this.hectopascal_hPa = new System.Windows.Forms.Label();
             this.Humidity_percent = new System.Windows.Forms.Label();
             this.Templature_degrees = new System.Windows.Forms.Label();
-            this.Hectpascal_value = new System.Windows.Forms.Label();
-            this.Hectopascal_label = new System.Windows.Forms.Label();
+            this.Pressure_value = new System.Windows.Forms.Label();
+            this.Pressure_label = new System.Windows.Forms.Label();
             this.Humidlity_value = new System.Windows.Forms.Label();
             this.Humidlity_label = new System.Windows.Forms.Label();
             this.Templature_value = new System.Windows.Forms.Label();
@@ -62,6 +63,7 @@ namespace FT232H_WinFormApp
             this.I2CRadioButton = new System.Windows.Forms.RadioButton();
             this.SPIRadioButton = new System.Windows.Forms.RadioButton();
             this.ComMethod = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
@@ -99,6 +101,7 @@ namespace FT232H_WinFormApp
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.richTextBox1);
             this.groupBox1.Location = new System.Drawing.Point(73, 32);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(405, 316);
@@ -106,6 +109,14 @@ namespace FT232H_WinFormApp
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(63, 37);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(285, 252);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
             // 
             // groupBox2
             // 
@@ -142,8 +153,8 @@ namespace FT232H_WinFormApp
             this.groupBox3.Controls.Add(this.hectopascal_hPa);
             this.groupBox3.Controls.Add(this.Humidity_percent);
             this.groupBox3.Controls.Add(this.Templature_degrees);
-            this.groupBox3.Controls.Add(this.Hectpascal_value);
-            this.groupBox3.Controls.Add(this.Hectopascal_label);
+            this.groupBox3.Controls.Add(this.Pressure_value);
+            this.groupBox3.Controls.Add(this.Pressure_label);
             this.groupBox3.Controls.Add(this.Humidlity_value);
             this.groupBox3.Controls.Add(this.Humidlity_label);
             this.groupBox3.Controls.Add(this.Templature_value);
@@ -183,28 +194,29 @@ namespace FT232H_WinFormApp
             this.Templature_degrees.TabIndex = 6;
             this.Templature_degrees.Text = "℃";
             // 
-            // Hectpascal_value
+            // Pressure_value
             // 
-            this.Hectpascal_value.AutoSize = true;
-            this.Hectpascal_value.Location = new System.Drawing.Point(160, 127);
-            this.Hectpascal_value.Name = "Hectpascal_value";
-            this.Hectpascal_value.Size = new System.Drawing.Size(13, 15);
-            this.Hectpascal_value.TabIndex = 5;
-            this.Hectpascal_value.Text = "0";
+            this.Pressure_value.AutoSize = true;
+            this.Pressure_value.Location = new System.Drawing.Point(130, 127);
+            this.Pressure_value.Name = "Pressure_value";
+            this.Pressure_value.Size = new System.Drawing.Size(13, 15);
+            this.Pressure_value.TabIndex = 5;
+            this.Pressure_value.Text = "0";
+            this.Pressure_value.Click += new System.EventHandler(this.Hectpascal_value_Click);
             // 
-            // Hectopascal_label
+            // Pressure_label
             // 
-            this.Hectopascal_label.AutoSize = true;
-            this.Hectopascal_label.Location = new System.Drawing.Point(52, 127);
-            this.Hectopascal_label.Name = "Hectopascal_label";
-            this.Hectopascal_label.Size = new System.Drawing.Size(70, 15);
-            this.Hectopascal_label.TabIndex = 4;
-            this.Hectopascal_label.Text = "hectopascal";
+            this.Pressure_label.AutoSize = true;
+            this.Pressure_label.Location = new System.Drawing.Point(52, 127);
+            this.Pressure_label.Name = "Pressure_label";
+            this.Pressure_label.Size = new System.Drawing.Size(51, 15);
+            this.Pressure_label.TabIndex = 4;
+            this.Pressure_label.Text = "Pressure";
             // 
             // Humidlity_value
             // 
             this.Humidlity_value.AutoSize = true;
-            this.Humidlity_value.Location = new System.Drawing.Point(158, 77);
+            this.Humidlity_value.Location = new System.Drawing.Point(130, 77);
             this.Humidlity_value.Name = "Humidlity_value";
             this.Humidlity_value.Size = new System.Drawing.Size(13, 15);
             this.Humidlity_value.TabIndex = 3;
@@ -222,7 +234,7 @@ namespace FT232H_WinFormApp
             // Templature_value
             // 
             this.Templature_value.AutoSize = true;
-            this.Templature_value.Location = new System.Drawing.Point(158, 30);
+            this.Templature_value.Location = new System.Drawing.Point(130, 30);
             this.Templature_value.Name = "Templature_value";
             this.Templature_value.Size = new System.Drawing.Size(13, 15);
             this.Templature_value.TabIndex = 1;
@@ -297,6 +309,7 @@ namespace FT232H_WinFormApp
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -317,8 +330,8 @@ namespace FT232H_WinFormApp
         private GroupBox groupBox3;
         private Label status_value;
         private Label status_label;
-        private Label Hectpascal_value;
-        private Label Hectopascal_label;
+        private Label Pressure_value;
+        private Label Pressure_label;
         private Label Humidlity_value;
         private Label Humidlity_label;
         private Label Templature_value;
@@ -330,5 +343,6 @@ namespace FT232H_WinFormApp
         private Label ComMethod;
         private RadioButton I2CRadioButton;
         private RadioButton SPIRadioButton;
+        private RichTextBox richTextBox1;
     }
 }

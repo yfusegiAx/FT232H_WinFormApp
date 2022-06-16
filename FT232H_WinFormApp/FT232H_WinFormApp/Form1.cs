@@ -33,16 +33,10 @@ namespace FT232H_WinFormApp
         /// 
         /// </summary>
         public Form1()
-        {
-            var stopwatch = new Stopwatch();
-
-       
+        {       
             InitializeComponent();
-            stopwatch.Start();//ランプ起動に何秒かかるか
 
             ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
-
-            //stopwatch.Stop();
 
             //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
             status_value.Text = ftStatus.ToString();
@@ -50,63 +44,16 @@ namespace FT232H_WinFormApp
             {
                 return;//error 終了
             }
+
            
+
             myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
             //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
             //bitmode 0=reset 
             //bitをマスクする＝bitを覆い隠す
-            //
+            
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
             //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
-
-           
-            //Thread.Sleep(500);
-            
-            //ランプを10回点滅させるテスト
-            /*
-            for (int i = 0; i < 10; i++)
-            {
-
-                code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
-                myFtdiDevice.Write(code, code.Length, ref written);
-                Thread.Sleep(500);
-                Debug.WriteLine("code.length="+code.Length);//code.length確認　
-                Debug.WriteLine("written=" + written);//written確認　
-               
-
-                code = new byte[] { 0x80, 0b11111110, 0xFF };//3byte書き込まれる //adbus0~adbus6は１　adbus7は0 adbus0だけ接続している場合は点滅する
-                myFtdiDevice.Write(code, code.Length, ref written);//書き込むバイト配列　デバイスに書き込まれるバイト数　実際デバイスに書き込まれるバイト数
-
-                Thread.Sleep(500);
-            }
-            */
-
-            //myFtdiDevice.Write(new byte[] {0x80},1,ref written);
-           
-            /*
-           code = new byte[] { 0x8d, 0x86, 0xa1, 0x1a, 0x20, 0x6D, 0x00 };
-           myFtdiDevice.Write(code, code.Length, ref written);
-
-           code = new byte[] { 0x80, 0b11111111, 0xFF };
-           myFtdiDevice.Write(code, code.Length, ref written);
-            
-            code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
-            myFtdiDevice.Write(code, code.Length, ref written);
-
-            uint bufnum = 0;
-
-            byte[] buf = new byte[bufnum];
-            myFtdiDevice.GetRxBytesAvailable(ref bufnum);//public GetRxBytesAvailable(uint32 &RxQueue) //読み込みのために利用可能なバイト数
-            //readで初めてカウントが始まる？
-            if (bufnum >= 0)
-            {
-                Debug.WriteLine("bufnum=" + $"{bufnum}");
-            }
-           */
-            
-
-
-            //myFtdiDevice.Read(buf, 1,ref written);
 
         }
       
@@ -162,9 +109,6 @@ namespace FT232H_WinFormApp
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
-
-           
-
         }
 
         /// <summary>
@@ -191,13 +135,13 @@ namespace FT232H_WinFormApp
 
             byte sendData = 0x88;//送るデータ
             uint readOnlyBufNum = 0;//読み込み用バッファ
-            byte[] code;
-            uint written = 0;
-            //List<byte> code_list = new List<byte>();//Listだと遅い
 
-            //code_list.Count;
-            //                          Value     Direction 
-            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる
+            uint written = 0;
+            byte[] readData;
+            //0x80 output
+            //Value     Direction 
+            ///** 通信開始　　**//
+            byte[] code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
             code = new byte[] { 0x80, 0b11110111, 0b11111011 };//adbus2をlowにすることで通信したいスレーブを選択できるようになる
@@ -206,31 +150,55 @@ namespace FT232H_WinFormApp
             code = new byte[] { 0x80, 0b11110110, 0b11111011 };//adbus0=0にする クロックを送るため
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
+            ///**  通信　**///
+            byte[] ftdiData = new byte[] { 0x11, 0x00, 0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送るためのbyte配列
+            //0x88というデータを送るとftdi側はデータを送っているがBMEは0x88というアドレスを読ませてほしいと認知
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
 
-            byte[] ftdiData= new byte[] { 0x11,0x00,0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送る
-            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 書き込み
-            
-            ftdiData = new byte[] { 0x20, 0x77, 0x00};//data input buffer :-VE時にクロックを送る、1byteのデータを送る この時点ではクロックは出ていない
-            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる 読み込みのためのデータの送信が起きる 
-            Thread.Sleep(2);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            ftdiData = new byte[] { 0x20, 0x79, 0x00 };//data input buffer :-VE時にクロックを送る、この時点ではクロックは出ていない 0x0078+1読み取る設定
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる  読み取りをしろ　という命令
+            //ここではftdiのバッファに読み取ったデータが入っている状態 まだデータは参照していない
 
-            if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum)==FTDI.FT_STATUS.FT_OK)
+            ///**   通信終了   **///
+            code = new byte[] { 0x80, 0b11111110, 0b11111011 };//csが１になる　スレーブとのやり取りの終了
+            myFtdiDevice.Write(code, code.Length, ref written);//
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//reset のための配列
+            myFtdiDevice.Write(code, code.Length, ref written);//
+           
+            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+
+            if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum) == FTDI.FT_STATUS.FT_OK)
             {
-                code = new byte[] { 0x80, 0b11111110, 0b11111011 };
-                myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
-                code = new byte[] { 0x80, 0b11111111, 0b11111011 };
-                myFtdiDevice.Write(code, code.Length, ref written);//データを送る　クロックが発生する
-                Templature_value.Text = "${@}";//BME280で取得した値の表示：温度
-                Humidlity_value.Text = "${@}";//BME280で取得した値の表示：湿度
-                Hectpascal_value.Text = "${@}";//BME280で取得した値の表示：気圧
                 Debug.WriteLine($"readonlybufnum={readOnlyBufNum}");
-                byte[] readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列
-                myFtdiDevice.Read(readData,readOnlyBufNum,ref readOnlyBufNum);//ここで読み込む byte[] dataBuffer,uint numBytesToRead,ref uint numBytesRead
-                                                                              //データを格納するバッファ、デバイスから要求されたバイト数、実際読み込まれるバイト数
-                Debug.WriteLine($"readData = 0x{readData[0]:X02}");
+                readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列 new byteでmallocしている
+                myFtdiDevice.Read(readData, readOnlyBufNum, ref readOnlyBufNum);//ここで読み込む byte[] dataBuffer,uint numBytesToRead,ref uint numBytesRead
+                                                                                //データを格納するバッファ、デバイスから要求されたバイト数、実際読み込まれるバイト数
+                if (readOnlyBufNum <= 0x78)
+                {
+                    Debug.WriteLine($"readData = NO DATA");
+                    return;
+                }
+                else
+                {
+                    Debug.WriteLine($"readData = 0x{readData[0]:X02}");
+                }
 
             }
+            else {
+                return;
+            }
+            //今回(6/16)はBMEとだけ通信するのでBMEだけと通信する前提でインスタンス生成
+            BME280 bme280=new BME280();//インスタンス生成
+            bme280.BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
+            bme280.BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray() );//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
+            Templature_value.Text = $"{bme280.Temprature}";//BME280で取得した値の表示：温度 キャリブレーション後の値
+            Humidlity_value.Text = $"{bme280.Humidity}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
+            Pressure_value.Text = $"{bme280.Pressure}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
 
+        }
+        public string ByteToString(byte[] input, int num)
+        {
+            return $"0x{BitConverter.ToString(input, 0, num).Replace("-", " ")}";
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -269,6 +237,11 @@ namespace FT232H_WinFormApp
         private void I2CRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             //I2C通信を始める
+        }
+
+        private void Hectpascal_value_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
