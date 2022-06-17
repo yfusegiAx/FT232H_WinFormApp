@@ -37,7 +37,6 @@ namespace FT232H_WinFormApp
             InitializeComponent();
 
             ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
-
             //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
             status_value.Text = ftStatus.ToString();
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
@@ -141,7 +140,10 @@ namespace FT232H_WinFormApp
             //0x80 output
             //Value     Direction 
             ///** 通信開始　　**//
-            byte[] code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            byte[] code = new byte[] { 0x86, 4, 0 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+
+             code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
             code = new byte[] { 0x80, 0b11110111, 0b11111011 };//adbus2をlowにすることで通信したいスレーブを選択できるようになる
@@ -149,6 +151,23 @@ namespace FT232H_WinFormApp
 
             code = new byte[] { 0x80, 0b11110110, 0b11111011 };//adbus0=0にする クロックを送るため
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+
+            //読み込み前の設定
+            //code = new byte[] { 0x11, 0x01,0x00,0x60,0xB6};//BMEへのresetの命令 E0にB6を送る
+           // myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+
+            //設定を完了してから読み込み開始
+
+            //湿度の設定　設定しないとスキップされる
+            code = new byte[] { 0x11, 0x01, 0x00, 0x72, 0x01 };
+            //0(write) F2(11110010) value(00000001) :over sampling x1==>01110010 00000001=>0x72に0x01を書き込みをするバイト配列
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+
+            //温度　圧力　モードの設定
+            code = new byte[] { 0x11, 0x01, 0x00, 0x74, 0x27 };//0(書き込みモード) F4に　valueを書き込みをするバイト配列
+            //0 11110100 00100111==>0x74 に0x27を書き込む
+            //001 001 11 ==>0x27 温度データのオーバーサンプリングx1 圧力データのオーバーサンプリングx1 通常モード:11 (スリープが00 強制が01,10)
+            myFtdiDevice.Write(code, code.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
 
             ///**  通信　**///
             byte[] ftdiData = new byte[] { 0x11, 0x00, 0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送るためのbyte配列
@@ -191,9 +210,9 @@ namespace FT232H_WinFormApp
             BME280 bme280=new BME280();//インスタンス生成
             bme280.BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
             bme280.BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray() );//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
-            Templature_value.Text = $"{bme280.Temprature}";//BME280で取得した値の表示：温度 キャリブレーション後の値
-            Humidlity_value.Text = $"{bme280.Humidity}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
-            Pressure_value.Text = $"{bme280.Pressure}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
+            Templature_value.Text = $"{Math.Round(bme280.Temprature,3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
+            Humidlity_value.Text = $"{Math.Round(bme280.Humidity,3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
+            Pressure_value.Text = $"{Math.Round(bme280.Pressure/100.0,3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
 
         }
         public string ByteToString(byte[] input, int num)
