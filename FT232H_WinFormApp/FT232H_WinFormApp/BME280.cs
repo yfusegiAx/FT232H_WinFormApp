@@ -46,26 +46,31 @@ namespace FT232H_WinFormApp
         public void BME280_Calib(byte[] rawData)
         {
             ID = rawData[0xD0 - 0x88];
-            dig_T1 = 0.0;
-            dig_T2 = 0.0;
-            dig_T3 = 0.0;
-            dig_P1 = 0.0;
-            dig_P2 = 0.0;
-            dig_P3 = 0.0;
-            dig_P4 = 0.0;
-            dig_P5 = 0.0;
-            dig_P6 = 0.0;
-            dig_P7 = 0.0;
-            dig_P8 = 0.0;
-            dig_P9 = 0.0;
+            //0x88から順にdig_T1[7-0],dig_T2[15-8],,と格納されているので値を正しく代入していく
+            dig_T1 = ((UInt16)rawData[0x89 - 0x88]<<8)  | rawData[0x88 - 0x88];
+            dig_T2 = ((Int16)rawData[0x8B - 0x88] << 8) | rawData[0x8A - 0x88];
+            dig_T3 = ((Int16)rawData[0x8D - 0x88] << 8) | rawData[0x8C - 0x88];
+            dig_P1 = ((UInt16)rawData[0x8F - 0x88] << 8)| rawData[0x8E - 0x88];
+            dig_P2 = ((Int16)rawData[0x91 - 0x88] << 8) | rawData[0x90 - 0x88];
+            dig_P3 = ((Int16)rawData[0x93 - 0x88] << 8) | rawData[0x92 - 0x88];
+            dig_P4 = ((Int16)rawData[0x95 - 0x88] << 8) | rawData[0x94 - 0x88];
+            dig_P5 = ((Int16)rawData[0x97 - 0x88] << 8) | rawData[0x96 - 0x88];
+            dig_P6 = ((Int16)rawData[0x99 - 0x88] << 8) | rawData[0x98 - 0x88];
+            dig_P7 = ((Int16)rawData[0x9B - 0x88] << 8) | rawData[0x9A - 0x88];
+            dig_P8 = ((Int16)rawData[0x9D - 0x88] << 8) | rawData[0x9C - 0x88];
+            dig_P9 = ((Int16)rawData[0x9F - 0x88] << 8) | rawData[0x9E - 0x88];
             if (ID == 0x60)
             {
-                dig_H1 = 0.0;
-                dig_H2 = 0.0;
-                dig_H3 = 0.0;
-                dig_H4 = 0.0;
-                dig_H5 = 0.0;
-                dig_H6 = 0.0;
+                dig_H1 = (Byte)rawData[0xA1 - 0x88];
+                dig_H2 = ((Int16)rawData[0xE2 - 0x88] << 8) | rawData[0xE1-0x88];
+                dig_H3 = (Byte)rawData[0xE3 - 0x88];
+                dig_H4 = ((Int16)rawData[0xE5 - 0x88] << 4) | rawData[0xE4 - 0x88];
+                dig_H5 = ((Int16)rawData[0xE6 - 0x88] << 4) | rawData[0xE7 - 0x88];
+                dig_H6 = ((SByte)rawData[0xE7 - 0x88]);
+            }
+            else
+            {
+                Debug.WriteLine("ID is not 0x60");
             }
         }
         public void BME280_Calc(byte[] rawData)//ByteToString(readData.Skip(0x?? - 0x88).ToArray(), 3)で取得した生のデータをキャリブレーションできる形に変換
@@ -73,11 +78,11 @@ namespace FT232H_WinFormApp
             //F7~FEまでひとつなぎになっているデータをきりとる
             //readData[0xF7]~readData[0xFE]
            
-            BME280_S32_t adc_T = rawData[0x02];// rawData[0xFA] + rawData[0xFB] + rawData[0xFC];
-            BME280_S32_t adc_P = rawData[0x02];// rawData[0xF7] + rawData[0xF8] + rawData[0xF9];
-            BME280_S32_t adc_H = rawData[0x02];// rawData[0xFD] + rawData[0xFE];
-            Temprature = BME280_compensate_T_double(adc_T);
+            BME280_S32_t adc_P = ((rawData[0] * 256 + rawData[1])*256 + rawData[2])>>4;// rawData[0xF7] + rawData[0xF8] + rawData[0xF9];
+            BME280_S32_t adc_T = ((rawData[3] * 256 + rawData[4]) * 256 + rawData[5]) >> 4;// rawData[0xFA] + rawData[0xFB] + rawData[0xFC];
+            BME280_S32_t adc_H = rawData[6] * 256 + rawData[7];// rawData[0xFD] + rawData[0xFE];
             Pressure = BME280_compensate_P_double(adc_P);
+            Temprature = BME280_compensate_T_double(adc_T);
             Humidity = BME280_compensate_H_double(adc_H);
         }
        
