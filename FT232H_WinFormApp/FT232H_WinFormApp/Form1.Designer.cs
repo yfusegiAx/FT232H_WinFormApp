@@ -45,7 +45,7 @@ namespace FT232H_WinFormApp
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.status_value = new System.Windows.Forms.Label();
             this.status_label = new System.Windows.Forms.Label();
@@ -67,7 +67,9 @@ namespace FT232H_WinFormApp
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
@@ -80,17 +82,17 @@ namespace FT232H_WinFormApp
             this.buttonInit.Name = "buttonInit";
             this.buttonInit.Size = new System.Drawing.Size(100, 42);
             this.buttonInit.TabIndex = 0;
-            this.buttonInit.Text = "Initialize";
+            this.buttonInit.Text = "SSD1306 Connect";
             this.buttonInit.UseVisualStyleBackColor = true;
             this.buttonInit.Click += new System.EventHandler(this.button1_Click);
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(226, 377);
+            this.buttonStart.Location = new System.Drawing.Point(212, 378);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(105, 41);
             this.buttonStart.TabIndex = 1;
-            this.buttonStart.Text = "Start";
+            this.buttonStart.Text = "BMP280 Connect";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -100,13 +102,13 @@ namespace FT232H_WinFormApp
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(109, 42);
             this.buttonStop.TabIndex = 2;
-            this.buttonStop.Text = "Stop";
+            this.buttonStop.Text = "App END";
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.richTextBox1);
+            this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(73, 162);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(416, 186);
@@ -115,13 +117,13 @@ namespace FT232H_WinFormApp
             this.groupBox1.Text = "SSD1306";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // richTextBox1
+            // pictureBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(63, 37);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(181, 115);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.pictureBox1.Location = new System.Drawing.Point(65, 49);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(121, 107);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
             // 
             // groupBox2
             // 
@@ -342,11 +344,21 @@ namespace FT232H_WinFormApp
             this.label1.TabIndex = 0;
             this.label1.Text = "Device :";
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Location = new System.Drawing.Point(73, 40);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(416, 107);
+            this.groupBox5.TabIndex = 8;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Clock Setting";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.CommunicationMethod);
             this.Controls.Add(this.groupBox3);
@@ -359,6 +371,7 @@ namespace FT232H_WinFormApp
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -394,10 +407,11 @@ namespace FT232H_WinFormApp
         private Label ComMethod;
         private RadioButton I2CRadioButton;
         private RadioButton SPIRadioButton;
-        private RichTextBox richTextBox1;
         private GroupBox groupBox4;
         private RadioButton radioButton1;
         private RadioButton radioButton2;
         private Label label1;
+        private PictureBox pictureBox1;
+        private GroupBox groupBox5;
     }
 }

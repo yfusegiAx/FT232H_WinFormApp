@@ -40,3 +40,4 @@ Z:\FT232H_WinFormApp\FT232H_WinFormApp\FT232H_WinFormApp\obj\Debug\net6.0-window
 Z:\FT232H_WinFormApp\FT232H_WinFormApp\FT232H_WinFormApp\obj\Debug\net6.0-windows10.0.17763.0\FT232H_WinFormApp.pdb
 Z:\FT232H_WinFormApp\FT232H_WinFormApp\FT232H_WinFormApp\obj\Debug\net6.0-windows10.0.17763.0\FT232H_WinFormApp.genruntimeconfig.cache
 Z:\FT232H_WinFormApp\FT232H_WinFormApp\FT232H_WinFormApp\obj\Debug\net6.0-windows10.0.17763.0\ref\FT232H_WinFormApp.dll
+Z:\FT232H_WinFormApp\FT232H_WinFormApp\FT232H_WinFormApp\obj\Debug\net6.0-windows10.0.17763.0\FT232H_WinFormApp.Form2.resources

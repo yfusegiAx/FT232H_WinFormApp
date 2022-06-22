@@ -74,9 +74,11 @@ namespace FT232H_WinFormApp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            SSD1306 ssd1306=new SSD1306();
+            ssd1306.IIC_Connect();
             //initializeボタン
             //デバイスの登録
-            
+            /*
             bool DeviceInit = false;
             buttonInit.Enabled = false;
 
@@ -109,7 +111,8 @@ namespace FT232H_WinFormApp
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
-            
+            */
+
         }
 
         /// <summary>
@@ -208,7 +211,6 @@ namespace FT232H_WinFormApp
             else {
                 return;
             }
-            //今回(6/16)はBMEとだけ通信するのでBMEだけと通信する前提でインスタンス生成
             BME280 bme280=new BME280();//インスタンス生成
             bme280.BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
             Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
@@ -265,5 +267,11 @@ namespace FT232H_WinFormApp
         {
 
         }
+        
+        private void FileSelectButton_Click(object sender, EventArgs e)
+        {
+            
+        }
+
     }
 }
