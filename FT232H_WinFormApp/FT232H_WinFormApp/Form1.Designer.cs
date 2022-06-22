@@ -63,10 +63,15 @@ namespace FT232H_WinFormApp
             this.I2CRadioButton = new System.Windows.Forms.RadioButton();
             this.SPIRadioButton = new System.Windows.Forms.RadioButton();
             this.ComMethod = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonInit
@@ -91,7 +96,7 @@ namespace FT232H_WinFormApp
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(398, 377);
+            this.buttonStop.Location = new System.Drawing.Point(369, 377);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(109, 42);
             this.buttonStop.TabIndex = 2;
@@ -102,9 +107,9 @@ namespace FT232H_WinFormApp
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.richTextBox1);
-            this.groupBox1.Location = new System.Drawing.Point(73, 32);
+            this.groupBox1.Location = new System.Drawing.Point(73, 162);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(405, 316);
+            this.groupBox1.Size = new System.Drawing.Size(416, 186);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
@@ -114,7 +119,7 @@ namespace FT232H_WinFormApp
             // 
             this.richTextBox1.Location = new System.Drawing.Point(63, 37);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(285, 252);
+            this.richTextBox1.Size = new System.Drawing.Size(181, 115);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -124,7 +129,7 @@ namespace FT232H_WinFormApp
             this.groupBox2.Controls.Add(this.status_label);
             this.groupBox2.Location = new System.Drawing.Point(506, 32);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(245, 67);
+            this.groupBox2.Size = new System.Drawing.Size(266, 67);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Interface";
@@ -159,9 +164,9 @@ namespace FT232H_WinFormApp
             this.groupBox3.Controls.Add(this.Humidlity_label);
             this.groupBox3.Controls.Add(this.Templature_value);
             this.groupBox3.Controls.Add(this.Templature_label);
-            this.groupBox3.Location = new System.Drawing.Point(506, 179);
+            this.groupBox3.Location = new System.Drawing.Point(506, 269);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(248, 169);
+            this.groupBox3.Size = new System.Drawing.Size(266, 169);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "BME280 ";
@@ -256,7 +261,7 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.Controls.Add(this.ComMethod);
             this.CommunicationMethod.Location = new System.Drawing.Point(506, 114);
             this.CommunicationMethod.Name = "CommunicationMethod";
-            this.CommunicationMethod.Size = new System.Drawing.Size(248, 59);
+            this.CommunicationMethod.Size = new System.Drawing.Size(266, 59);
             this.CommunicationMethod.TabIndex = 6;
             this.CommunicationMethod.TabStop = false;
             this.CommunicationMethod.Text = "CommunicationMethod";
@@ -294,11 +299,55 @@ namespace FT232H_WinFormApp
             this.ComMethod.TabIndex = 0;
             this.ComMethod.Text = "Method :";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.radioButton1);
+            this.groupBox4.Controls.Add(this.radioButton2);
+            this.groupBox4.Controls.Add(this.label1);
+            this.groupBox4.Location = new System.Drawing.Point(506, 183);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(266, 59);
+            this.groupBox4.TabIndex = 7;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "ControllDevice";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(185, 26);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(69, 19);
+            this.radioButton1.TabIndex = 2;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "SSD1306";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(111, 26);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(68, 19);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "BMP280";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(52, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(48, 15);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Device :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.CommunicationMethod);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -316,6 +365,8 @@ namespace FT232H_WinFormApp
             this.groupBox3.PerformLayout();
             this.CommunicationMethod.ResumeLayout(false);
             this.CommunicationMethod.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -344,5 +395,9 @@ namespace FT232H_WinFormApp
         private RadioButton I2CRadioButton;
         private RadioButton SPIRadioButton;
         private RichTextBox richTextBox1;
+        private GroupBox groupBox4;
+        private RadioButton radioButton1;
+        private RadioButton radioButton2;
+        private Label label1;
     }
 }

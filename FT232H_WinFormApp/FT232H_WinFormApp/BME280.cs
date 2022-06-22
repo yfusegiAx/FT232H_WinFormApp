@@ -66,7 +66,8 @@ namespace FT232H_WinFormApp
                 dig_H3 = (Byte)rawData[0xE3 - 0x88];
                 dig_H4 = ((Int16)rawData[0xE4 - 0x88] )<<4 | (0x0f & rawData[0xE5 - 0x88]);//[0xE5][3-0]だけを足したいので上位4bitをマスク
                 
-                dig_H5 = ((Int16)rawData[0xE5 - 0x88] & 0xF0)<<4 | rawData[0xE6 - 0x88];//[0xE5][7-4]だけを足したいので下位4bitをマスク
+                //dig_H5 = ((Int16)rawData[0xE5 - 0x88] & 0xF0)<<4 | rawData[0xE6 - 0x88];//[0xE5][7-4]だけを足したいので下位4bitをマスク
+                dig_H5 = (Int16)(rawData[0xE5 - 0x88] & 0xF0)>>4 | rawData[0xE6 - 0x88]<<4;//[0xE5][7-4]だけを足したいので下位4bitをマスク
                 dig_H6 = (SByte)rawData[0xE7 - 0x88];
 
                 /*
@@ -79,7 +80,7 @@ namespace FT232H_WinFormApp
             }
             else
             {
-                Debug.WriteLine("ID is not 0x60");
+                Debug.WriteLine($"ID is not 0x60 but 0x{ID:X02}");
             }
         }
         public void BME280_Calc(byte[] rawData)//ByteToString(readData.Skip(0x?? - 0x88).ToArray(), 3)で取得した生のデータをキャリブレーションできる形に変換

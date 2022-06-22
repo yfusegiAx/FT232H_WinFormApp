@@ -76,6 +76,7 @@ namespace FT232H_WinFormApp
         {
             //initializeボタン
             //デバイスの登録
+            
             bool DeviceInit = false;
             buttonInit.Enabled = false;
 
@@ -108,6 +109,7 @@ namespace FT232H_WinFormApp
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
+            
         }
 
         /// <summary>
@@ -184,7 +186,7 @@ namespace FT232H_WinFormApp
             code = new byte[] { 0x80, 0b11111111, 0b11111011 };//reset のための配列
             myFtdiDevice.Write(code, code.Length, ref written);//
            
-            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            Thread.Sleep(100);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
 
             if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum) == FTDI.FT_STATUS.FT_OK)
             {
@@ -209,6 +211,7 @@ namespace FT232H_WinFormApp
             //今回(6/16)はBMEとだけ通信するのでBMEだけと通信する前提でインスタンス生成
             BME280 bme280=new BME280();//インスタンス生成
             bme280.BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
+            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
             bme280.BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray() );//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
             Templature_value.Text = $"{Math.Round(bme280.Temprature,3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
             Humidlity_value.Text = $"{Math.Round(bme280.Humidity,3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
