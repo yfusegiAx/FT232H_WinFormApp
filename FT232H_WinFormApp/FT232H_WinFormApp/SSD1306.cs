@@ -77,11 +77,12 @@ namespace FT232H_WinFormApp
             return PictureSettiing;
         }
 
-        public void IIC_Connect()
+        public void IIC_Connect()//I2C Connectボタンを押すと呼び出される
         {
             if(PictureDisplay())
             {
                 //画像を表示
+                MessageBox.Show("PictureDisplay():true");
             }
             else
             {

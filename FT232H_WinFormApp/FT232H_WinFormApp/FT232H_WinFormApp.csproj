@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iot.Device.Bindings" Version="2.1.0" />
+    <PackageReference Include="System.Device.Gpio" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="FTD2XX_NET">
       <HintPath>..\FTD2XX_NET.dll</HintPath>
     </Reference>
