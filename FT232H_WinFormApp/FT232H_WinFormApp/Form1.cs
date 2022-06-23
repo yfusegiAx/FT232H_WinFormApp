@@ -35,48 +35,6 @@ namespace FT232H_WinFormApp
         public Form1()
         {       
             InitializeComponent();
-
-            ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
-            //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
-            status_value.Text = ftStatus.ToString();
-            if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            {
-                return;//error 終了
-            }
-
-           
-
-            myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
-            //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
-            //bitmode 0=reset 
-            //bitをマスクする＝bitを覆い隠す
-            
-            myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
-            //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
-
-        }
-      
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-    
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SSD1306 ssd1306=new SSD1306();
-            ssd1306.IIC_Connect();
-            //initializeボタン
             //デバイスの登録
             /*
             bool DeviceInit = false;
@@ -113,6 +71,45 @@ namespace FT232H_WinFormApp
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
             */
 
+
+            ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
+            status_value.Text = ftStatus.ToString();
+            if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            {
+                return;//error 終了
+            }
+
+            myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
+            //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
+            //bitmode 0=reset 
+            //bitをマスクする＝bitを覆い隠す
+            
+            myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
+            //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
+
+        }
+      
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+    
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SSD1306_Button_Click(object sender, EventArgs e)
+        {
+            SSD1306 ssd1306 =new SSD1306();
+            ssd1306.IIC_Connect();
         }
 
         /// <summary>
@@ -130,11 +127,9 @@ namespace FT232H_WinFormApp
         }
        */
 
-        private void button2_Click(object sender, EventArgs e)
+        private void BMP280_Button_Click(object sender, EventArgs e)
         {
-            //startボタン
-            //通信の開始
-            //クロックを送りデータも送る
+            //SPI通信でBMPとやり取りする
             //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
 
             byte sendData = 0x88;//送るデータ
@@ -219,13 +214,15 @@ namespace FT232H_WinFormApp
             Humidlity_value.Text = $"{Math.Round(bme280.Humidity,3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
             Pressure_value.Text = $"{Math.Round(bme280.Pressure/100.0,3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
 
+            //インスタンスの破棄
+
         }
         public string ByteToString(byte[] input, int num)
         {
             return $"0x{BitConverter.ToString(input, 0, num).Replace("-", " ")}";
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void AppEnd_Button_Click(object sender, EventArgs e)
         {
             //stopボタン
             //通信終了
@@ -238,9 +235,9 @@ namespace FT232H_WinFormApp
             {
                 status_value.Text = "Driver not loaded";
 
-                buttonInit.Enabled = false;
-                buttonStart.Enabled = false;
-                buttonStop.Enabled = true;
+                SSD1306_Button.Enabled = false;
+                BMP280_Button.Enabled = false;
+                AppEnd_Button.Enabled = true;
             }
             Thread.Sleep(1000);
             Application.Exit();//アプリケーションの終了

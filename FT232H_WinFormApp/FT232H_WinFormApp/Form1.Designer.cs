@@ -41,9 +41,9 @@ namespace FT232H_WinFormApp
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonInit = new System.Windows.Forms.Button();
-            this.buttonStart = new System.Windows.Forms.Button();
-            this.buttonStop = new System.Windows.Forms.Button();
+            this.SSD1306_Button = new System.Windows.Forms.Button();
+            this.BMP280_Button = new System.Windows.Forms.Button();
+            this.AppEnd_Button = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -76,35 +76,35 @@ namespace FT232H_WinFormApp
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
-            // buttonInit
+            // SSD1306_Button
             // 
-            this.buttonInit.Location = new System.Drawing.Point(59, 375);
-            this.buttonInit.Name = "buttonInit";
-            this.buttonInit.Size = new System.Drawing.Size(100, 42);
-            this.buttonInit.TabIndex = 0;
-            this.buttonInit.Text = "SSD1306 Connect";
-            this.buttonInit.UseVisualStyleBackColor = true;
-            this.buttonInit.Click += new System.EventHandler(this.button1_Click);
+            this.SSD1306_Button.Location = new System.Drawing.Point(59, 375);
+            this.SSD1306_Button.Name = "SSD1306_Button";
+            this.SSD1306_Button.Size = new System.Drawing.Size(100, 42);
+            this.SSD1306_Button.TabIndex = 0;
+            this.SSD1306_Button.Text = "SSD1306 Connect";
+            this.SSD1306_Button.UseVisualStyleBackColor = true;
+            this.SSD1306_Button.Click += new System.EventHandler(this.SSD1306_Button_Click);
             // 
-            // buttonStart
+            // BMP280_Button
             // 
-            this.buttonStart.Location = new System.Drawing.Point(212, 378);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(105, 41);
-            this.buttonStart.TabIndex = 1;
-            this.buttonStart.Text = "BMP280 Connect";
-            this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.button2_Click);
+            this.BMP280_Button.Location = new System.Drawing.Point(212, 378);
+            this.BMP280_Button.Name = "BMP280_Button";
+            this.BMP280_Button.Size = new System.Drawing.Size(105, 41);
+            this.BMP280_Button.TabIndex = 1;
+            this.BMP280_Button.Text = "BMP280 Connect";
+            this.BMP280_Button.UseVisualStyleBackColor = true;
+            this.BMP280_Button.Click += new System.EventHandler(this.BMP280_Button_Click);
             // 
-            // buttonStop
+            // AppEnd_Button
             // 
-            this.buttonStop.Location = new System.Drawing.Point(369, 377);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(109, 42);
-            this.buttonStop.TabIndex = 2;
-            this.buttonStop.Text = "App END";
-            this.buttonStop.UseVisualStyleBackColor = true;
-            this.buttonStop.Click += new System.EventHandler(this.button3_Click);
+            this.AppEnd_Button.Location = new System.Drawing.Point(369, 377);
+            this.AppEnd_Button.Name = "AppEnd_Button";
+            this.AppEnd_Button.Size = new System.Drawing.Size(109, 42);
+            this.AppEnd_Button.TabIndex = 2;
+            this.AppEnd_Button.Text = "APP END";
+            this.AppEnd_Button.UseVisualStyleBackColor = true;
+            this.AppEnd_Button.Click += new System.EventHandler(this.AppEnd_Button_Click);
             // 
             // groupBox1
             // 
@@ -150,9 +150,9 @@ namespace FT232H_WinFormApp
             this.status_label.AutoSize = true;
             this.status_label.Location = new System.Drawing.Point(52, 26);
             this.status_label.Name = "status_label";
-            this.status_label.Size = new System.Drawing.Size(39, 15);
+            this.status_label.Size = new System.Drawing.Size(42, 15);
             this.status_label.TabIndex = 0;
-            this.status_label.Text = "Status";
+            this.status_label.Text = "Status:";
             this.status_label.Click += new System.EventHandler(this.label1_Click);
             // 
             // groupBox3
@@ -364,9 +364,9 @@ namespace FT232H_WinFormApp
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.buttonStop);
-            this.Controls.Add(this.buttonStart);
-            this.Controls.Add(this.buttonInit);
+            this.Controls.Add(this.AppEnd_Button);
+            this.Controls.Add(this.BMP280_Button);
+            this.Controls.Add(this.SSD1306_Button);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -386,9 +386,9 @@ namespace FT232H_WinFormApp
 
         #endregion
 
-        private Button buttonInit;
-        private Button buttonStart;
-        private Button buttonStop;
+        private Button SSD1306_Button;
+        private Button BMP280_Button;
+        private Button AppEnd_Button;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
