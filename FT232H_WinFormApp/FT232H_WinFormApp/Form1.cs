@@ -131,16 +131,17 @@ namespace FT232H_WinFormApp
         {
             //SPI通信でBMPとやり取りする
             //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
-
+           
             byte sendData = 0x88;//送るデータ
             uint readOnlyBufNum = 0;//読み込み用バッファ
 
             uint written = 0;
-            byte[] readData;
+            byte[] code,readData;
+            /*
             //0x80 output
             //Value     Direction 
-            ///** 通信開始　　**//
-            byte[] code = new byte[] { 0x86, 4, 0 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            ///// 通信開始　　////
+            code = new byte[] { 0x86, 4, 0 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
              code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
@@ -153,15 +154,15 @@ namespace FT232H_WinFormApp
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
             //読み込み前の設定
-            //code = new byte[] { 0x11, 0x01,0x00,0x60,0xB6};//BMEへのresetの命令 E0にB6を送る
-           // myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            //code = new byte[] { 0x11, 0x01,0x00,0x60,0xB6};//BMEへのresetの命令 E0にB6を送る -VEのときdataをoutputする
+            //myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
             //設定を完了してから読み込み開始
 
             //湿度の設定　設定しないとスキップされる
             code = new byte[] { 0x11, 0x01, 0x00, 0x72, 0x01 };
             //0(write) F2(11110010) value(00000001) :over sampling x1==>01110010 00000001=>0x72に0x01を書き込みをするバイト配列
-            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる データ量はwriteで初めて定義する
 
             //温度　圧力　モードの設定
             code = new byte[] { 0x11, 0x01, 0x00, 0x74, 0x27 };//0(書き込みモード) F4に　valueを書き込みをするバイト配列
@@ -169,7 +170,7 @@ namespace FT232H_WinFormApp
             //001 001 11 ==>0x27 温度データのオーバーサンプリングx1 圧力データのオーバーサンプリングx1 通常モード:11 (スリープが00 強制が01,10)
             myFtdiDevice.Write(code, code.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
 
-            ///**  通信　**///
+            /////  通信　/////
             byte[] ftdiData = new byte[] { 0x11, 0x00, 0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送るためのbyte配列
             //0x88というデータを送るとftdi側はデータを送っているがBMEは0x88というアドレスを読ませてほしいと認知
             myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
@@ -178,7 +179,7 @@ namespace FT232H_WinFormApp
             myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる  読み取りをしろ　という命令
             //ここではftdiのバッファに読み取ったデータが入っている状態 まだデータは参照していない
 
-            ///**   通信終了   **///
+            /////   通信終了   /////
             code = new byte[] { 0x80, 0b11111110, 0b11111011 };//csが１になる　スレーブとのやり取りの終了
             myFtdiDevice.Write(code, code.Length, ref written);//
             code = new byte[] { 0x80, 0b11111111, 0b11111011 };//reset のための配列
@@ -213,9 +214,65 @@ namespace FT232H_WinFormApp
             Templature_value.Text = $"{Math.Round(bme280.Temprature,3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
             Humidlity_value.Text = $"{Math.Round(bme280.Humidity,3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
             Pressure_value.Text = $"{Math.Round(bme280.Pressure/100.0,3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
+            */
+            //SSDの動作確認
 
-            //インスタンスの破棄
+            //インスタンスの破棄?
+            
 
+            //送るbit配列
+            //1
+            //初期化 scl,sdaがhigh時 
+            //0x80...output GPIO pin is lowbyte not output databytes
+            //                  hex   value H/L    direction I/O     
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+
+            //2
+            //scl=high,sda=low  start conditionを定義する
+            byte[] startConditionCode = new byte[] { 0x80, 0b11111101, 0b11111011 };
+            myFtdiDevice.Write(startConditionCode, startConditionCode.Length, ref written);//データを送る　電位が変わる
+          
+            //3
+            //sa0(スレーブアドレス) + R/W#（read/write）を送る
+            //sa0= 0111 101*          R/W#=0 =>01111010=>アドレスはFTDIにとっては0x7A　スレーブにとっては0x3D
+            //sa0= 0111 100* (今回は) R/W#=0 =>01111000=>送るデータは0x78　スレーブにとっては0x3C
+            byte[] sa0Code = new byte[] { 0x11, 0x00, 0x00, (0x3C << 1) | 0b0 };//-VE write databyte output
+
+
+            //4
+            //data output by recerver for ack signal
+            byte[] ackCode = new byte[] { 0x33, 0x00, 1 };//-VE read bits 1を送る
+           
+            //5
+            //Co(continuation bit) + D/C#(data/command select bit) + ControlByte + ACK + DataByte + ACKを送る
+            //送る際は上記をリトルエンディアン(ack,databyte,ack,control,dc,co)
+            //Co=0のときはデータバイトしか送らない
+            //0x12..only ＋VE bits output
+            //0x36..in -VE out +VE bits output
+            //0x11でまとめたデータ送れる
+            //co=1(dataもcommandも送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x08
+            byte[] controlCode = new byte[] {0x11,0x00,0x00,0x80};
+            //ack+databyte
+            //displayOnのコマンドを送る
+            //Display On AFh
+            //AFh:D/C Hex D7 D6 D5 D4 D3 D2 D1 D0
+            //    0   AF  1  0  1  0  1  1  1  1
+            byte[] commandCode = new byte[] {0x11,0x00,0x00,0xAF};
+            //combine
+            byte[] combineDataCode=new byte[sa0Code.Length+ackCode.Length+controlCode.Length+ackCode.Length+commandCode.Length+ackCode.Length];//0x80+0x00+0xAF+0x00 
+            sa0Code.CopyTo(combineDataCode,0);
+            ackCode.CopyTo(combineDataCode, sa0Code.Length);
+            controlCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length);
+            ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length);
+            commandCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length + ackCode.Length);
+            ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length+ controlCode.Length + ackCode.Length + commandCode.Length);
+            myFtdiDevice.Write(combineDataCode, combineDataCode.Length, ref written);//データを送る　電位が変わる
+
+            //6
+            //stop condition
+            byte[] stopConditionCode = new byte[] { 0x80, 0b11111111, 0b11111011 };
+            myFtdiDevice.Write(stopConditionCode, stopConditionCode.Length, ref written);//データを送る　電位が変わる
         }
         public string ByteToString(byte[] input, int num)
         {
