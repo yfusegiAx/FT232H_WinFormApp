@@ -220,6 +220,14 @@ namespace FT232H_WinFormApp
             //インスタンスの破棄?
             
 
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///IIC
+            ///速度調整
+            byte[] sclCode=new byte[] {0x86,0x0E,0x00};
+            myFtdiDevice.Write(sclCode, sclCode.Length, ref written);//データを送る　電位が変わる
+
             //送るbit配列
             //1
             //初期化 scl,sdaがhigh時 
@@ -232,18 +240,31 @@ namespace FT232H_WinFormApp
             //scl=high,sda=low  start conditionを定義する
             byte[] startConditionCode = new byte[] { 0x80, 0b11111101, 0b11111011 };
             myFtdiDevice.Write(startConditionCode, startConditionCode.Length, ref written);//データを送る　電位が変わる
-          
+
+            //2,5　clockを落とす
+          　byte[] Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
             //3
             //sa0(スレーブアドレス) + R/W#（read/write）を送る
             //sa0= 0111 101*          R/W#=0 =>01111010=>アドレスはFTDIにとっては0x7A　スレーブにとっては0x3D
             //sa0= 0111 100* (今回は) R/W#=0 =>01111000=>送るデータは0x78　スレーブにとっては0x3C
             byte[] sa0Code = new byte[] { 0x11, 0x00, 0x00, (0x3C << 1) | 0b0 };//-VE write databyte output
+            myFtdiDevice.Write(sa0Code, sa0Code.Length, ref written);//データを送る　電位が変わる
 
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
 
             //4
             //data output by recerver for ack signal
-            byte[] ackCode = new byte[] { 0x33, 0x00, 1 };//-VE read bits 1を送る
-           
+            byte[] ackCode = new byte[] { 0x22, 0x00};//+VE data in bits
+
+            myFtdiDevice.Write(ackCode, ackCode.Length, ref written);//データを送る　電位が変わる
+
+            //4,5　clockを落とす
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
             //5
             //Co(continuation bit) + D/C#(data/command select bit) + ControlByte + ACK + DataByte + ACKを送る
             //送る際は上記をリトルエンディアン(ack,databyte,ack,control,dc,co)
@@ -251,27 +272,81 @@ namespace FT232H_WinFormApp
             //0x12..only ＋VE bits output
             //0x36..in -VE out +VE bits output
             //0x11でまとめたデータ送れる
-            //co=1(dataもcommandも送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x08
-            byte[] controlCode = new byte[] {0x11,0x00,0x00,0x80};
+            //co=1(dataもcommandも送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x80
+            //byte[] controlCode = new byte[] {0x11,0x00,0x00,0x80};
+            byte[] controlCode = new byte[] { 0x11, 0x00, 0x00, 0x00 };
+            myFtdiDevice.Write(controlCode, controlCode.Length, ref written);
+
+            ackCode = new byte[] { 0x22, 0x00 };//+VE data in bits
+            myFtdiDevice.Write(ackCode, ackCode.Length, ref written);//データを送る　電位が変わる
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+
+
+            //8D->14->AF
+            byte[] commandCode = new byte[] { 0x11, 0x00, 0x00, 0x8D };
+            myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+            ackCode = new byte[] { 0x22, 0x00 };//+VE data in bits
+            myFtdiDevice.Write(ackCode, ackCode.Length, ref written);//データを送る　電位が変わる
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+
+
+
+            commandCode = new byte[] { 0x11, 0x00, 0x00, 0x14 };
+            myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+            ackCode = new byte[] { 0x22, 0x00 };//+VE data in bits
+            myFtdiDevice.Write(ackCode, ackCode.Length, ref written);//データを送る　電位が変わる
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+
+
             //ack+databyte
             //displayOnのコマンドを送る
             //Display On AFh
             //AFh:D/C Hex D7 D6 D5 D4 D3 D2 D1 D0
             //    0   AF  1  0  1  0  1  1  1  1
-            byte[] commandCode = new byte[] {0x11,0x00,0x00,0xAF};
+            commandCode = new byte[] {0x11,0x00,0x00,0xAF};
+            myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
+            
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+            ackCode = new byte[] { 0x22, 0x00 };//+VE data in bits
+            myFtdiDevice.Write(ackCode, ackCode.Length, ref written);//データを送る　電位が変わる
+
+            Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
+            myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
             //combine
-            byte[] combineDataCode=new byte[sa0Code.Length+ackCode.Length+controlCode.Length+ackCode.Length+commandCode.Length+ackCode.Length];//0x80+0x00+0xAF+0x00 
-            sa0Code.CopyTo(combineDataCode,0);
-            ackCode.CopyTo(combineDataCode, sa0Code.Length);
-            controlCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length);
-            ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length);
-            commandCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length + ackCode.Length);
-            ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length+ controlCode.Length + ackCode.Length + commandCode.Length);
-            myFtdiDevice.Write(combineDataCode, combineDataCode.Length, ref written);//データを送る　電位が変わる
+            //byte[] combineDataCode=new byte[controlCode.Length+ackCode.Length+commandCode.Length+ackCode.Length];//0x80+0x00+0xAF+0x00 
+            //sa0Code.CopyTo(combineDataCode,0);
+            //ackCode.CopyTo(combineDataCode, sa0Code.Length);
+            //controlCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length);
+            //ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length);
+            //commandCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length + ackCode.Length);
+            //ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length+ controlCode.Length + ackCode.Length + commandCode.Length);
+            //myFtdiDevice.Write(combineDataCode, combineDataCode.Length, ref written);//データを送る　電位が変わる
 
             //6
             //stop condition
-            byte[] stopConditionCode = new byte[] { 0x80, 0b11111111, 0b11111011 };
+            byte[] stopConditionCode = new byte[] { 0x80, 0b11111101, 0b11111011 };
+            myFtdiDevice.Write(stopConditionCode, stopConditionCode.Length, ref written);//データを送る　電位が変わる
+            stopConditionCode = new byte[] { 0x80, 0b11111111, 0b11111011 };
             myFtdiDevice.Write(stopConditionCode, stopConditionCode.Length, ref written);//データを送る　電位が変わる
         }
         public string ByteToString(byte[] input, int num)

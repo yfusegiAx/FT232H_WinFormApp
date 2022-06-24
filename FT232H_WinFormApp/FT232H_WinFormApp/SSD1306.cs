@@ -184,6 +184,10 @@ namespace FT232H_WinFormApp
                 //           0   A[7:0] A7 A6 A5 A4 A3 A2 A1 A0
                 //Enable charge pump regulator 8Dh,14h
 
+                //Enable charge pump regular
+                //8Dh
+                //14
+
 
                 //Display On AFh
                 //AFh:D/C Hex D7 D6 D5 D4 D3 D2 D1 D0
