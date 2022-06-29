@@ -16,7 +16,7 @@ namespace FT232H_WinFormApp
 {
     using BME280_S32_t = System.Int32;//int型32bitのユーザー定義型を宣言
 
-    
+
     public class BME280
     {
         BME280_S32_t t_fine;
@@ -43,6 +43,15 @@ namespace FT232H_WinFormApp
         public double Humidity;
         public double Pressure;
         public byte ID;
+
+        public void SPI_BME280_Connect()
+        {
+
+        }
+        public void IIC_BME280_Connect()
+        {
+
+        }
 
         public void BME280_Calib(byte[] rawData)
         {

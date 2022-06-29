@@ -63,16 +63,21 @@ namespace FT232H_WinFormApp
             this.SPIRadioButton = new System.Windows.Forms.RadioButton();
             this.ComMethod = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.SSD1306_RadioButton = new System.Windows.Forms.RadioButton();
+            this.BME280_RadioButton = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.FileOpen_button = new System.Windows.Forms.Button();
+            this.RadioButton = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // DeviceConnect_Button
@@ -97,6 +102,7 @@ namespace FT232H_WinFormApp
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.FileOpen_button);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(73, 162);
             this.groupBox1.Name = "groupBox1";
@@ -104,7 +110,6 @@ namespace FT232H_WinFormApp
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
-            //this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // pictureBox1
             // 
@@ -137,12 +142,11 @@ namespace FT232H_WinFormApp
             // status_label
             // 
             this.status_label.AutoSize = true;
-            this.status_label.Location = new System.Drawing.Point(52, 26);
+            this.status_label.Location = new System.Drawing.Point(34, 26);
             this.status_label.Name = "status_label";
             this.status_label.Size = new System.Drawing.Size(42, 15);
             this.status_label.TabIndex = 0;
             this.status_label.Text = "Status:";
-            //this.status_label.Click += new System.EventHandler(this.label1_Click);
             // 
             // groupBox3
             // 
@@ -161,7 +165,6 @@ namespace FT232H_WinFormApp
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "BME280 ";
-            //this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
             // hectopascal_hPa
             // 
@@ -198,7 +201,6 @@ namespace FT232H_WinFormApp
             this.Pressure_value.Size = new System.Drawing.Size(13, 15);
             this.Pressure_value.TabIndex = 5;
             this.Pressure_value.Text = "0";
-           // this.Pressure_value.Click += new System.EventHandler(this.Hectpascal_value_Click);
             // 
             // Pressure_label
             // 
@@ -255,12 +257,12 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.Size = new System.Drawing.Size(266, 59);
             this.CommunicationMethod.TabIndex = 6;
             this.CommunicationMethod.TabStop = false;
-            this.CommunicationMethod.Text = "CommunicationMethod";
+            this.CommunicationMethod.Text = "CommunicationStandard";
             // 
             // IICRadioButton
             // 
             this.IICRadioButton.AutoSize = true;
-            this.IICRadioButton.Location = new System.Drawing.Point(154, 26);
+            this.IICRadioButton.Location = new System.Drawing.Point(185, 28);
             this.IICRadioButton.Name = "IICRadioButton";
             this.IICRadioButton.Size = new System.Drawing.Size(38, 19);
             this.IICRadioButton.TabIndex = 2;
@@ -284,50 +286,52 @@ namespace FT232H_WinFormApp
             // ComMethod
             // 
             this.ComMethod.AutoSize = true;
-            this.ComMethod.Location = new System.Drawing.Point(52, 28);
+            this.ComMethod.Location = new System.Drawing.Point(34, 26);
             this.ComMethod.Name = "ComMethod";
-            this.ComMethod.Size = new System.Drawing.Size(55, 15);
+            this.ComMethod.Size = new System.Drawing.Size(60, 15);
             this.ComMethod.TabIndex = 0;
-            this.ComMethod.Text = "Method :";
+            this.ComMethod.Text = "Standard :";
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.radioButton1);
-            this.groupBox4.Controls.Add(this.radioButton2);
+            this.groupBox4.Controls.Add(this.SSD1306_RadioButton);
+            this.groupBox4.Controls.Add(this.BME280_RadioButton);
             this.groupBox4.Controls.Add(this.label1);
             this.groupBox4.Location = new System.Drawing.Point(506, 183);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(266, 59);
             this.groupBox4.TabIndex = 7;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "ControllDevice";
+            this.groupBox4.Text = "ControlDevice";
             // 
-            // radioButton1
+            // SSD1306_RadioButton
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(185, 26);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(69, 19);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "SSD1306";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.SSD1306_RadioButton.AutoSize = true;
+            this.SSD1306_RadioButton.Location = new System.Drawing.Point(185, 26);
+            this.SSD1306_RadioButton.Name = "SSD1306_RadioButton";
+            this.SSD1306_RadioButton.Size = new System.Drawing.Size(69, 19);
+            this.SSD1306_RadioButton.TabIndex = 2;
+            this.SSD1306_RadioButton.TabStop = true;
+            this.SSD1306_RadioButton.Text = "SSD1306";
+            this.SSD1306_RadioButton.UseVisualStyleBackColor = true;
+            this.SSD1306_RadioButton.CheckedChanged += new System.EventHandler(this.SSD1306_RadioButton_CheckedChanged);
             // 
-            // radioButton2
+            // BME280_RadioButton
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(111, 26);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(68, 19);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "BMP280";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.BME280_RadioButton.AutoSize = true;
+            this.BME280_RadioButton.Location = new System.Drawing.Point(111, 26);
+            this.BME280_RadioButton.Name = "BME280_RadioButton";
+            this.BME280_RadioButton.Size = new System.Drawing.Size(68, 19);
+            this.BME280_RadioButton.TabIndex = 1;
+            this.BME280_RadioButton.TabStop = true;
+            this.BME280_RadioButton.Text = "BMP280";
+            this.BME280_RadioButton.UseVisualStyleBackColor = true;
+            this.BME280_RadioButton.CheckedChanged += new System.EventHandler(this.BME280_RadioButton_CheckedChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(52, 28);
+            this.label1.Location = new System.Drawing.Point(34, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 15);
             this.label1.TabIndex = 0;
@@ -337,16 +341,60 @@ namespace FT232H_WinFormApp
             // 
             this.groupBox5.Location = new System.Drawing.Point(73, 40);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(416, 107);
+            this.groupBox5.Size = new System.Drawing.Size(129, 107);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Clock Setting";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.radioButton2);
+            this.groupBox6.Controls.Add(this.RadioButton);
+            this.groupBox6.Location = new System.Drawing.Point(212, 40);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(151, 107);
+            this.groupBox6.TabIndex = 9;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Slave Address";
+            // 
+            // FileOpen_button
+            // 
+            this.FileOpen_button.Location = new System.Drawing.Point(237, 137);
+            this.FileOpen_button.Name = "FileOpen_button";
+            this.FileOpen_button.Size = new System.Drawing.Size(82, 28);
+            this.FileOpen_button.TabIndex = 3;
+            this.FileOpen_button.Text = "File Open";
+            this.FileOpen_button.UseVisualStyleBackColor = true;
+            // 
+            // RadioButton
+            // 
+            this.RadioButton.AutoSize = true;
+            this.RadioButton.Location = new System.Drawing.Point(23, 27);
+            this.RadioButton.Name = "RadioButton";
+            this.RadioButton.Size = new System.Drawing.Size(128, 19);
+            this.RadioButton.TabIndex = 0;
+            this.RadioButton.TabStop = true;
+            this.RadioButton.Text = "0x76/0x77(BME280)";
+            this.RadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
+            this.RadioButton.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(23, 52);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(102, 19);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "0x3C(SSD1306)";
+            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.CommunicationMethod);
@@ -357,7 +405,6 @@ namespace FT232H_WinFormApp
             this.Controls.Add(this.DeviceConnect_Button);
             this.Name = "Form1";
             this.Text = "Form1";
-            //this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
@@ -368,6 +415,8 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -394,10 +443,14 @@ namespace FT232H_WinFormApp
         private RadioButton IICRadioButton;
         private RadioButton SPIRadioButton;
         private GroupBox groupBox4;
-        private RadioButton radioButton1;
-        private RadioButton radioButton2;
+        private RadioButton SSD1306_RadioButton;
+        private RadioButton BME280_RadioButton;
         private Label label1;
         private PictureBox pictureBox1;
         private GroupBox groupBox5;
+        private GroupBox groupBox6;
+        private Button FileOpen_button;
+        private RadioButton radioButton2;
+        private RadioButton RadioButton;
     }
 }
