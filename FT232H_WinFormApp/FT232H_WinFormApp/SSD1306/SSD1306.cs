@@ -17,7 +17,7 @@ using Iot.Device.Ssd13xx.Commands;//ssd13xxを使う
 
 namespace FT232H_WinFormApp
 {
-    public partial class SSD1306
+    public partial class SSD1306:FTDI_CommonFunction
     {
         public byte SSD1306_GetSlaveAddress(ref byte slaveAddress)
         {
@@ -53,7 +53,6 @@ namespace FT232H_WinFormApp
                ****stopCondition****
                IIC_SetStopCondition
              */
-    
             List<byte> code = new List<byte>();
             IIC_SSD1306_Initialize(myFtdiDevice, code, slaveAddress);
             IIC_SSD1306_SendControlBytes(myFtdiDevice,code);
@@ -62,6 +61,8 @@ namespace FT232H_WinFormApp
             IIC_SSD1306_SendStopCondition(myFtdiDevice, code);
         }
 
+
+        /////////SSD1306でIIC通信をする際に使うプロパティ ///////////
 
         public void IIC_SSD1306_Initialize(FTDI myFtdiDevice, List<byte> code, byte slaveAddress)
         {
@@ -153,17 +154,7 @@ namespace FT232H_WinFormApp
             code.AddRange(new byte[] { 0x80, 0b11111101, 0b11111011, 0x80, 0b11111111, 0b11111011 });
         }
 
-        public void Write_Code(List<byte> code, FTDI myFtdiDevice)
-        {
-            uint written = 0;//実際に書かれたbyte数
-            byte[] arrayCode = code.ToArray();//List<byte>->byte[]
-            var ftStatus = myFtdiDevice.Write(arrayCode, arrayCode.Length, ref written);//データを送る　電位が変わる
-            Debug.WriteLine($"{written}/{arrayCode.Length}");// 実際に書かれたbyte数/送りたいバイト数
-            if (ftStatus != FTDI.FT_STATUS.FT_OK || written != arrayCode.Length)
-            {
-                Debug.WriteLine("Write_Code:Error : number of bytes error");
-            }
-        }
+        
 
         public List<byte > IIC_SwitchCommandForSSD1306Display(string DisplayMode)
         {

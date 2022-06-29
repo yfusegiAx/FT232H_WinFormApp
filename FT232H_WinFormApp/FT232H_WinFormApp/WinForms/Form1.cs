@@ -14,44 +14,33 @@ using System.Diagnostics;
 
 namespace FT232H_WinFormApp
 {
+
     public partial class Form1 : Form
     {
-       
-        //driverの定義
-        FTDI.FT_STATUS ftStatus;//通信可能な状態
-
-        uint deviceCount = 0;
-
-        // Create new instance of the FTDI device class
-        //FTDIデバイスクラスのインスタンス生成
-        //デバイスクラス..usbインターフェースが所持している製品情報
         public static bool SPI_connect = false;
         public static bool IIC_connect = false;
         public static bool BME280_connect = false;
         public static bool SSD1306_connect = false;
         public static bool DisplayModeSelected = false;
         public static byte slaveAddress;
+        public static double[] BME280_data = new double[3];
         public static string DisplayMode;
 
         FTDI myFtdiDevice = new FTDI();//ftdi製品を使うためのインスタンス生成
+        FTDI_CommonFunction commonFunction = new FTDI_CommonFunction();
         BME280 bme280 = new BME280();
         SSD1306 ssd1306 = new SSD1306();
+        //driverの定義
+        FTDI.FT_STATUS ftStatus;//通信可能な状態
+        uint deviceCount = 0;
+
+        // Create new instance of the FTDI device class
+        //FTDIデバイスクラスのインスタンス生成
+        //デバイスクラス..usbインターフェースが所持している製品情報
         public Form1()
         {       
             InitializeComponent();
-            //デバイスの登録
-            /*
-            bool DeviceInit = false;
             
-            try
-            {
-                ftStatus = myFtdiDevice.GetNumberOfDevices(ref deviceCount);//接続可能なデバイスの数を数える、返り値はFT_STATUS
-            }
-            catch
-            {
-                status_value.Text = "Driver not loaded";
-            }
-            */
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
 
             // Update the Status text line
@@ -61,16 +50,11 @@ namespace FT232H_WinFormApp
             }
             else
             {
-                status_value.Text = "...Device NotFound";
+                status_value.Text = "Device NotFound";
             }
             Refresh();//Updateより広範囲の再描画 ただし遅い
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
-                                   //実行ー＞新しいフォームの生成ー＞イベントの処理
-            
-            //ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
-            //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
-            //status_value.Text = ftStatus.ToString();
             
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
@@ -78,13 +62,8 @@ namespace FT232H_WinFormApp
             }
 
             myFtdiDevice.SetBitMode(0xFF,0x0);//現行のデバイスが要求されたデバイスモードを対応していないときにデフォルトのUART,FIFO以外のモードを設定する
-            //setbitmode..(byte mask,byte bitmode) //0xFF..すべて出力 handleはc#では不要
-            //bitmode 0=reset 
-            //bitをマスクする＝bitを覆い隠す
-            
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
             //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
-            
         }
       
         public string ByteToString(byte[] input, int num)
@@ -102,12 +81,8 @@ namespace FT232H_WinFormApp
                 return;
             }
 
-            // Ensure that the RadioButton.Checked property
-            // changed to true.
             if (rb.Checked)
             {
-                // Keep track of the selected RadioButton by saving a reference
-                // to it.
                 SPI_connect = true;
                 IIC_connect = false;
             }
@@ -123,12 +98,8 @@ namespace FT232H_WinFormApp
                 return;
             }
 
-            // Ensure that the RadioButton.Checked property
-            // changed to true.
             if (rb.Checked)
             {
-                // Keep track of the selected RadioButton by saving a reference
-                // to it.
                 SPI_connect = false;
                 IIC_connect = true;
             }
@@ -144,12 +115,8 @@ namespace FT232H_WinFormApp
                 return;
             }
 
-            // Ensure that the RadioButton.Checked property
-            // changed to true.
             if (rb.Checked)
             {
-                // Keep track of the selected RadioButton by saving a reference
-                // to it.
                 BME280_connect = true;
                 SSD1306_connect = false;
             }
@@ -165,12 +132,8 @@ namespace FT232H_WinFormApp
                 return;
             }
 
-            // Ensure that the RadioButton.Checked property
-            // changed to true.
             if (rb.Checked)
             {
-                // Keep track of the selected RadioButton by saving a reference
-                // to it.
                 BME280_connect = false;
                 SSD1306_connect = true;
             }
@@ -179,10 +142,12 @@ namespace FT232H_WinFormApp
         private void DeviceConnect_Button_Click(object sender, EventArgs e)
         {
             //指定した通信規格とデバイスで通信をはじめる
-           
             if (SPI_connect==true && BME280_connect==true)
             {
-                bme280.SPI_BME280_Connect();
+                bme280.SPI_BME280_Connect(myFtdiDevice);
+                Templature_value.Text = $"{Math.Round(BME280_data[0], 3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
+                Pressure_value.Text = $"{Math.Round(BME280_data[1] / 100.0, 3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
+                Humidlity_value.Text = $"{Math.Round(BME280_data[2], 3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
             }
             else if (SPI_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
@@ -190,7 +155,7 @@ namespace FT232H_WinFormApp
             }
             else if (IIC_connect == true && BME280_connect == true)
             {
-                bme280.IIC_BME280_Connect();
+                bme280.IIC_BME280_Connect(myFtdiDevice);
             }
             else if (IIC_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
@@ -239,6 +204,6 @@ namespace FT232H_WinFormApp
             DisplayModeSelected = true;
             DisplayMode = DisplayMode_comboBox.SelectedItem.ToString();
         }
-            
+
     }
 }

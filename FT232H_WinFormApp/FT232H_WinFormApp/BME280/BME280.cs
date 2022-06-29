@@ -17,7 +17,7 @@ namespace FT232H_WinFormApp
     using BME280_S32_t = System.Int32;//int型32bitのユーザー定義型を宣言
 
 
-    public class BME280
+    public class BME280:FTDI_CommonFunction
     {
         BME280_S32_t t_fine;
         double dig_T1 = 0.0;
@@ -49,13 +49,79 @@ namespace FT232H_WinFormApp
             return slaveaddress;
         }
 
-        public void SPI_BME280_Connect()
+        public void SPI_BME280_Connect(FTDI myFtdiDevice)
         {
+            //SPIでBME280と通信するときの順序
+            //SPI通信でBMPとやり取りする
+            byte[] code, readData;
+            //code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
+            uint written = 0;
+            byte sendData = 0x88;//送るデータ
+            uint readOnlyBufNum = 0;//読み込み用バッファ
+            //0x80 output
+            //Value     Direction 
+            ///// 通信開始　　////
+            code = new byte[] { 0x86, 0b00000100, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            code = new byte[] { 0x80, 0b11110111, 0b11111011 };//adbus2をlowにすることで通信したいスレーブを選択できるようになる
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            code = new byte[] { 0x80, 0b11110110, 0b11111011 };//adbus0=0にする クロックを送るため
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            //読み込み前の設定
+            //code = new byte[] { 0x11, 0x01,0x00,0x60,0xB6};//BMEへのresetの命令 E0にB6を送る -VEのときdataをoutputする
+            //myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
+            //設定を完了してから読み込み開始
+            //湿度の設定　設定しないとスキップされる
+            code = new byte[] { 0x11, 0x01, 0x00, 0x72, 0x01 };
+            //0(write) F2(11110010) value(00000001) :over sampling x1==>01110010 00000001=>0x72に0x01を書き込みをするバイト配列
+            myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる データ量はwriteで初めて定義する
+            //温度　圧力　モードの設定
+            code = new byte[] { 0x11, 0x01, 0x00, 0x74, 0x27 };//0(書き込みモード) F4に　valueを書き込みをするバイト配列
+            //0 11110100 00100111==>0x74 に0x27を書き込む
+            //001 001 11 ==>0x27 温度データのオーバーサンプリングx1 圧力データのオーバーサンプリングx1 通常モード:11 (スリープが00 強制が01,10)
+            myFtdiDevice.Write(code, code.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
+            /////  通信　/////
+            byte[] ftdiData = new byte[] { 0x11, 0x00, 0x00, sendData };//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送るためのbyte配列
+            //0x88というデータを送るとftdi側はデータを送っているがBMEは0x88というアドレスを読ませてほしいと認知
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
+            ftdiData = new byte[] { 0x20, 0x79, 0x00 };//data input buffer :-VE時にクロックを送る、この時点ではクロックは出ていない 0x0078+1読み取る設定
+            myFtdiDevice.Write(ftdiData, ftdiData.Length, ref readOnlyBufNum);//クロック下がる  読み取りをしろ　という命令
+            //ここではftdiのバッファに読み取ったデータが入っている状態 まだデータは参照していない
+            /////   通信終了   /////
+            code = new byte[] { 0x80, 0b11111110, 0b11111011 };//csが１になる　スレーブとのやり取りの終了
+            myFtdiDevice.Write(code, code.Length, ref written);//
+            code = new byte[] { 0x80, 0b11111111, 0b11111011 };//reset のための配列
 
+            Thread.Sleep(100);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum) == FTDI.FT_STATUS.FT_OK)
+            {
+                Debug.WriteLine($"readonlybufnum={readOnlyBufNum}");
+                readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列 new byteでmallocしている
+                myFtdiDevice.Read(readData, readOnlyBufNum, ref readOnlyBufNum);//ここで読み込む byte[] dataBuffer,uint numBytesToRead,ref uint numBytesRead
+                                                                                //データを格納するバッファ、デバイスから要求されたバイト数、実際読み込まれるバイト数
+                if (readOnlyBufNum <= 0x78)
+                {
+                    Debug.WriteLine($"readData = NO DATA");
+                    return;
+                }
+                else
+                {
+                    Debug.WriteLine($"readData = 0x{readData[0]:X02}");
+                }
+            }
+            else
+            {
+                return;
+            }
+            BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
+            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray());//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
         }
-        public void IIC_BME280_Connect()
+        public void IIC_BME280_Connect(FTDI myFtdiDevice)
         {
-
+            //IICでBME280と通信するときの順序
         }
 
         public void BME280_Calib(byte[] rawData)
@@ -86,11 +152,9 @@ namespace FT232H_WinFormApp
                 dig_H6 = (SByte)rawData[0xE7 - 0x88];
 
                 /*
-
                 0x0F & 0x73  = 0x03
                 0x0F & (0x73 >> 4) = 0x07
                 00001111 & (0111)=>00000111
-                 
                  */
             }
             else
@@ -102,13 +166,15 @@ namespace FT232H_WinFormApp
         {
             //F7~FEまでひとつなぎになっているデータをきりとる
             //readData[0xF7]~readData[0xFE]
-           
             BME280_S32_t adc_P = ((rawData[0] <<8 | rawData[1]) <<4) | rawData[2]>>4;// rawData[0xF7] + rawData[0xF8] + rawData[0xF9];
             BME280_S32_t adc_T = ((rawData[3] << 8 | rawData[4]) << 4) | rawData[5] >> 4; // rawData[0xFA] + rawData[0xFB] + rawData[0xFC];
             BME280_S32_t adc_H = rawData[6]<<8 | rawData[7];// rawData[0xFD] + rawData[0xFE];
             Temprature = BME280_compensate_T_double(adc_T);
             Pressure = BME280_compensate_P_double(adc_P);
             Humidity = BME280_compensate_H_double(adc_H);
+            Form1.BME280_data.SetValue(Temprature,0);
+            Form1.BME280_data.SetValue(Pressure,1);
+            Form1.BME280_data.SetValue(Humidity,2);
         }
 
 
