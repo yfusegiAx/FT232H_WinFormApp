@@ -45,7 +45,7 @@ namespace FT232H_WinFormApp
             }
             //dialog のokを押した後でbitmap->表示
             //form1のpicturebox1に表示
-            Bitmap src = new Bitmap(filePath);
+            //Bitmap src = new Bitmap(filePath);
             //Bitmap dst = new Bitmap(src.Width, src.Height, PixelFormat.Format24bppRgb);//RGB24bitにする
             //Graphics gfx = Graphics.FromImage(dst);
 
@@ -61,7 +61,7 @@ namespace FT232H_WinFormApp
 
         public void IIC_Connect()//I2C Connectボタンを押すと呼び出される
         {
-            if(PictureDisplay())
+            if (PictureDisplay())
             {
                 //画像を表示
                 MessageBox.Show("PictureDisplay():true");
@@ -80,6 +80,8 @@ namespace FT232H_WinFormApp
                 adbus3->sda
                 */
 
+                // I2C_Send(byte[] dat, byte SA);
+                // I2C_Send(new byte[] {0x00, 0x8D, 0x14, 0xAF}, 0x3C);
                 /*
                 power ON時の推奨順序
                 VddをON
@@ -104,7 +106,7 @@ namespace FT232H_WinFormApp
 
                 //3
                 //sa0(スレーブアドレス) + R/W#（read/write）を送る
-                //sa0= 0111 101*          R/W#=0 =>01111010=>アドレスはFTDIにとっては0x7A　スレーブにとっては0x3D
+                //sa0= 0111 101*          R/W#=0 =>01111010=>アドレスはFTDIにとっては0x7A　スレーブにとっては0x3C
                 //sa0= 0111 100* (今回は) R/W#=0 =>01111000=>送るデータは0x78　スレーブにとっては0x3C
                 //0x10 databytes output when +VE
                 //0x7A=0111101 + 0  上位7bitをスレーブはデータとして受取り,最上位に0がつくから0x3C
@@ -158,6 +160,7 @@ namespace FT232H_WinFormApp
                 //     0   DA  1  1  0  1  1  0  1  0
 
                 //Set Constrast Control 81h,7Fh
+                /**///
                 //81h:D/C Hex D7 D6 D5 D4 D3 D2 D1 D0
                 //    0   81  1  0  0  0  0  0  0  1
 

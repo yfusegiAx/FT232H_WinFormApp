@@ -131,13 +131,13 @@ namespace FT232H_WinFormApp
         {
             //SPI通信でBMPとやり取りする
             //  code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
-           
+           /*
             byte sendData = 0x88;//送るデータ
             uint readOnlyBufNum = 0;//読み込み用バッファ
 
             uint written = 0;
             byte[] code,readData;
-            /*
+            
             //0x80 output
             //Value     Direction 
             ///// 通信開始　　////
@@ -183,7 +183,6 @@ namespace FT232H_WinFormApp
             code = new byte[] { 0x80, 0b11111110, 0b11111011 };//csが１になる　スレーブとのやり取りの終了
             myFtdiDevice.Write(code, code.Length, ref written);//
             code = new byte[] { 0x80, 0b11111111, 0b11111011 };//reset のための配列
-            myFtdiDevice.Write(code, code.Length, ref written);//
            
             Thread.Sleep(100);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
 
@@ -214,18 +213,20 @@ namespace FT232H_WinFormApp
             Templature_value.Text = $"{Math.Round(bme280.Temprature,3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
             Humidlity_value.Text = $"{Math.Round(bme280.Humidity,3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
             Pressure_value.Text = $"{Math.Round(bme280.Pressure/100.0,3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
-            */
+            
             //SSDの動作確認
 
             //インスタンスの破棄?
             
 
-
+            */
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///IIC
             ///速度調整
-            byte[] sclCode=new byte[] {0x86,0x0E,0x00};
+            byte[] sclCode=new byte[] { 0x8C,0x86,0x0E,0x00};
+            uint written = 0;
+
             myFtdiDevice.Write(sclCode, sclCode.Length, ref written);//データを送る　電位が変わる
 
             //送るbit配列
@@ -233,7 +234,7 @@ namespace FT232H_WinFormApp
             //初期化 scl,sdaがhigh時 
             //0x80...output GPIO pin is lowbyte not output databytes
             //                  hex   value H/L    direction I/O     
-            code = new byte[] { 0x80, 0b11111111, 0b11111011 };
+            byte[] code = new byte[] { 0x80, 0b11111111, 0b11111011 };
             myFtdiDevice.Write(code, code.Length, ref written);//データを送る　電位が変わる
 
             //2
@@ -244,6 +245,8 @@ namespace FT232H_WinFormApp
             //2,5　clockを落とす
           　byte[] Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
             myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+
+           
 
             //3
             //sa0(スレーブアドレス) + R/W#（read/write）を送る
@@ -271,7 +274,6 @@ namespace FT232H_WinFormApp
             //Co=0のときはデータバイトしか送らない
             //0x12..only ＋VE bits output
             //0x36..in -VE out +VE bits output
-            //0x11でまとめたデータ送れる
             //co=1(dataもcommandも送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x80
             //byte[] controlCode = new byte[] {0x11,0x00,0x00,0x80};
             byte[] controlCode = new byte[] { 0x11, 0x00, 0x00, 0x00 };
@@ -286,6 +288,8 @@ namespace FT232H_WinFormApp
 
 
             //8D->14->AF
+            //8D
+            
             byte[] commandCode = new byte[] { 0x11, 0x00, 0x00, 0x8D };
             myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
 
@@ -300,7 +304,7 @@ namespace FT232H_WinFormApp
 
 
 
-
+            //14
             commandCode = new byte[] { 0x11, 0x00, 0x00, 0x14 };
             myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
 
@@ -312,14 +316,10 @@ namespace FT232H_WinFormApp
 
             Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
             myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
+            
 
 
-
-            //ack+databyte
-            //displayOnのコマンドを送る
-            //Display On AFh
-            //AFh:D/C Hex D7 D6 D5 D4 D3 D2 D1 D0
-            //    0   AF  1  0  1  0  1  1  1  1
+            //AF
             commandCode = new byte[] {0x11,0x00,0x00,0xAF};
             myFtdiDevice.Write(commandCode, commandCode.Length, ref written);
             
@@ -332,15 +332,7 @@ namespace FT232H_WinFormApp
             Code = new byte[] { 0x80, 0b11111100, 0b11111011 };
             myFtdiDevice.Write(Code, Code.Length, ref written);//データを送る　電位が変わる
 
-            //combine
-            //byte[] combineDataCode=new byte[controlCode.Length+ackCode.Length+commandCode.Length+ackCode.Length];//0x80+0x00+0xAF+0x00 
-            //sa0Code.CopyTo(combineDataCode,0);
-            //ackCode.CopyTo(combineDataCode, sa0Code.Length);
-            //controlCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length);
-            //ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length);
-            //commandCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length + controlCode.Length + ackCode.Length);
-            //ackCode.CopyTo(combineDataCode, ackCode.Length + sa0Code.Length+ controlCode.Length + ackCode.Length + commandCode.Length);
-            //myFtdiDevice.Write(combineDataCode, combineDataCode.Length, ref written);//データを送る　電位が変わる
+            
 
             //6
             //stop condition

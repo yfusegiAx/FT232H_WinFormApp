@@ -16,6 +16,7 @@ namespace FT232H_WinFormApp
 {
     using BME280_S32_t = System.Int32;//int型32bitのユーザー定義型を宣言
 
+    
     public class BME280
     {
         BME280_S32_t t_fine;
