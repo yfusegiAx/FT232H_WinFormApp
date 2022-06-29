@@ -44,6 +44,7 @@ namespace FT232H_WinFormApp
             this.DeviceConnect_Button = new System.Windows.Forms.Button();
             this.AppEnd_Button = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.FileOpen_button = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.status_value = new System.Windows.Forms.Label();
@@ -68,9 +69,8 @@ namespace FT232H_WinFormApp
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.FileOpen_button = new System.Windows.Forms.Button();
-            this.RadioButton = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.SlaveSSD1306RadioButton = new System.Windows.Forms.RadioButton();
+            this.SlaveBME280RadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -110,6 +110,15 @@ namespace FT232H_WinFormApp
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
+            // 
+            // FileOpen_button
+            // 
+            this.FileOpen_button.Location = new System.Drawing.Point(237, 137);
+            this.FileOpen_button.Name = "FileOpen_button";
+            this.FileOpen_button.Size = new System.Drawing.Size(82, 28);
+            this.FileOpen_button.TabIndex = 3;
+            this.FileOpen_button.Text = "File Open";
+            this.FileOpen_button.UseVisualStyleBackColor = true;
             // 
             // pictureBox1
             // 
@@ -348,46 +357,39 @@ namespace FT232H_WinFormApp
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.radioButton2);
-            this.groupBox6.Controls.Add(this.RadioButton);
+            this.groupBox6.Controls.Add(this.SlaveSSD1306RadioButton);
+            this.groupBox6.Controls.Add(this.SlaveBME280RadioButton);
             this.groupBox6.Location = new System.Drawing.Point(212, 40);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(151, 107);
+            this.groupBox6.Size = new System.Drawing.Size(160, 107);
             this.groupBox6.TabIndex = 9;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Slave Address";
             // 
-            // FileOpen_button
+            // SlaveSSD1306RadioButton
             // 
-            this.FileOpen_button.Location = new System.Drawing.Point(237, 137);
-            this.FileOpen_button.Name = "FileOpen_button";
-            this.FileOpen_button.Size = new System.Drawing.Size(82, 28);
-            this.FileOpen_button.TabIndex = 3;
-            this.FileOpen_button.Text = "File Open";
-            this.FileOpen_button.UseVisualStyleBackColor = true;
+            this.SlaveSSD1306RadioButton.AutoSize = true;
+            this.SlaveSSD1306RadioButton.Location = new System.Drawing.Point(23, 52);
+            this.SlaveSSD1306RadioButton.Name = "SlaveSSD1306RadioButton";
+            this.SlaveSSD1306RadioButton.Size = new System.Drawing.Size(102, 19);
+            this.SlaveSSD1306RadioButton.TabIndex = 1;
+            this.SlaveSSD1306RadioButton.TabStop = true;
+            this.SlaveSSD1306RadioButton.Text = "0x3C(SSD1306)";
+            this.SlaveSSD1306RadioButton.UseVisualStyleBackColor = true;
+            this.SlaveSSD1306RadioButton.CheckedChanged += new System.EventHandler(this.SlaveSSD1306RadioButton_CheckedChanged);
             // 
-            // RadioButton
+            // SlaveBME280RadioButton
             // 
-            this.RadioButton.AutoSize = true;
-            this.RadioButton.Location = new System.Drawing.Point(23, 27);
-            this.RadioButton.Name = "RadioButton";
-            this.RadioButton.Size = new System.Drawing.Size(128, 19);
-            this.RadioButton.TabIndex = 0;
-            this.RadioButton.TabStop = true;
-            this.RadioButton.Text = "0x76/0x77(BME280)";
-            this.RadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
-            this.RadioButton.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(23, 52);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(102, 19);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "0x3C(SSD1306)";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.SlaveBME280RadioButton.AutoSize = true;
+            this.SlaveBME280RadioButton.Location = new System.Drawing.Point(23, 27);
+            this.SlaveBME280RadioButton.Name = "SlaveBME280RadioButton";
+            this.SlaveBME280RadioButton.Size = new System.Drawing.Size(128, 19);
+            this.SlaveBME280RadioButton.TabIndex = 0;
+            this.SlaveBME280RadioButton.TabStop = true;
+            this.SlaveBME280RadioButton.Text = "0x76/0x77(BME280)";
+            this.SlaveBME280RadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
+            this.SlaveBME280RadioButton.UseVisualStyleBackColor = true;
+            this.SlaveBME280RadioButton.CheckedChanged += new System.EventHandler(this.SlaveBME280RadioButton_CheckedChanged);
             // 
             // Form1
             // 
@@ -450,7 +452,7 @@ namespace FT232H_WinFormApp
         private GroupBox groupBox5;
         private GroupBox groupBox6;
         private Button FileOpen_button;
-        private RadioButton radioButton2;
-        private RadioButton RadioButton;
+        private RadioButton SlaveSSD1306RadioButton;
+        private RadioButton SlaveBME280RadioButton;
     }
 }

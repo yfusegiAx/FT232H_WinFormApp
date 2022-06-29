@@ -29,7 +29,7 @@ namespace FT232H_WinFormApp
         public static bool IIC_connect = false;
         public static bool BME280_connect = false;
         public static bool SSD1306_connect = false;
-
+        public static byte slaveAddress;
 
 
 
@@ -39,7 +39,7 @@ namespace FT232H_WinFormApp
         {       
             InitializeComponent();
             //デバイスの登録
-            
+            /*
             bool DeviceInit = false;
             
             try
@@ -50,7 +50,7 @@ namespace FT232H_WinFormApp
             {
                 status_value.Text = "Driver not loaded";
             }
-
+            */
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
 
             // Update the Status text line
@@ -60,16 +60,17 @@ namespace FT232H_WinFormApp
             }
             else
             {
-                status_value.Text = "Device NotFound";
+                status_value.Text = "...Device NotFound";
             }
             Refresh();//Updateより広範囲の再描画 ただし遅い
             //Update();//FormsのControllクラスの関数　 クライアント領域内の無効化された領域が再描画される
             Application.DoEvents();//System.WindowForms メッセージキューに現在あるwindowメッセージをすべて処理する
                                    //実行ー＞新しいフォームの生成ー＞イベントの処理
             
-            ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
+            //ftStatus = myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
             //myFtdiDevice.GetNumberOfDevices(ref deviceCount);//deviceCount。。PCと接続できるデバイスの数
-            status_value.Text = ftStatus.ToString();
+            //status_value.Text = ftStatus.ToString();
+            
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 return;//error 終了
@@ -176,24 +177,24 @@ namespace FT232H_WinFormApp
         private void DeviceConnect_Button_Click(object sender, EventArgs e)
         {
             //指定した通信規格とデバイスで通信をはじめる
-            SPI spi = new SPI();
-            IIC iic = new IIC();
+            BME280 bme280 = new BME280();
+            SSD1306 ssd1306 = new SSD1306();
 
             if (SPI_connect==true && BME280_connect==true)
             {
-                spi.SPI_BME280_Connect();
+                bme280.SPI_BME280_Connect();
             }
             else if (SPI_connect == true && SSD1306_connect == true)
             {
-                spi.SPI_SSD1306_Connect();
+                ssd1306.SPI_SSD1306_Connect(myFtdiDevice);
             }
             else if (IIC_connect == true && BME280_connect == true)
             {
-                iic.IIC_BME280_Connect();
+                bme280.IIC_BME280_Connect();
             }
             else if (IIC_connect == true && SSD1306_connect == true)
             {
-                iic.IIC_SSD1306_Connect();
+                ssd1306.IIC_SSD1306_Connect(myFtdiDevice,slaveAddress);
             }
             else
             {
@@ -219,6 +220,16 @@ namespace FT232H_WinFormApp
             }
             Thread.Sleep(1000);
             Application.Exit();//アプリケーションの終了
+        }
+
+        private void SlaveBME280RadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            slaveAddress = 0x76;
+        }
+
+        private void SlaveSSD1306RadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            slaveAddress = 0x3C;
         }
     }
 }
