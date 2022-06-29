@@ -29,12 +29,13 @@ namespace FT232H_WinFormApp
         public static bool IIC_connect = false;
         public static bool BME280_connect = false;
         public static bool SSD1306_connect = false;
+        public static bool DisplayModeSelected = false;
         public static byte slaveAddress;
-
-
+        public static string DisplayMode;
 
         FTDI myFtdiDevice = new FTDI();//ftdi製品を使うためのインスタンス生成
-
+        BME280 bme280 = new BME280();
+        SSD1306 ssd1306 = new SSD1306();
         public Form1()
         {       
             InitializeComponent();
@@ -83,6 +84,7 @@ namespace FT232H_WinFormApp
             
             myFtdiDevice.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE);//setbitmode..(byte mask,byte bitmode)
             //FTDI.FT_BIT_MODES.FT_BIT_MODE_MPSSE=0x2
+            
         }
       
         public string ByteToString(byte[] input, int num)
@@ -177,14 +179,12 @@ namespace FT232H_WinFormApp
         private void DeviceConnect_Button_Click(object sender, EventArgs e)
         {
             //指定した通信規格とデバイスで通信をはじめる
-            BME280 bme280 = new BME280();
-            SSD1306 ssd1306 = new SSD1306();
-
+           
             if (SPI_connect==true && BME280_connect==true)
             {
                 bme280.SPI_BME280_Connect();
             }
-            else if (SPI_connect == true && SSD1306_connect == true)
+            else if (SPI_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
                 ssd1306.SPI_SSD1306_Connect(myFtdiDevice);
             }
@@ -192,9 +192,9 @@ namespace FT232H_WinFormApp
             {
                 bme280.IIC_BME280_Connect();
             }
-            else if (IIC_connect == true && SSD1306_connect == true)
+            else if (IIC_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
-                ssd1306.IIC_SSD1306_Connect(myFtdiDevice,slaveAddress);
+                ssd1306.IIC_SSD1306_Connect(myFtdiDevice,(0x3C<<1 | 0b0));
             }
             else
             {
@@ -222,14 +222,23 @@ namespace FT232H_WinFormApp
             Application.Exit();//アプリケーションの終了
         }
 
-        private void SlaveBME280RadioButton_CheckedChanged(object sender, EventArgs e)
+        private void SlaveBME280RadioButton_CheckedChanged(object sender, EventArgs e)//slaveaddressを設定する
         {
             slaveAddress = 0x76;
+            bme280.BME280_GetSlaveAddress(ref slaveAddress);
         }
 
-        private void SlaveSSD1306RadioButton_CheckedChanged(object sender, EventArgs e)
+        private void SlaveSSD1306RadioButton_CheckedChanged(object sender, EventArgs e)//slaveaddressを設定する
         {
-            slaveAddress = 0x3C;
+            slaveAddress = (0x3C<<1 | 0b0);
+            ssd1306.SSD1306_GetSlaveAddress(ref slaveAddress);
         }
+
+        private void DisplayMode_comboBox_SelectedIndexChanged(object sender, EventArgs e)//displaymodeを選択したときの動作
+        {
+            DisplayModeSelected = true;
+            DisplayMode = DisplayMode_comboBox.SelectedItem.ToString();
+        }
+            
     }
 }

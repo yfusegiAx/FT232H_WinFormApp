@@ -44,8 +44,8 @@ namespace FT232H_WinFormApp
             this.DeviceConnect_Button = new System.Windows.Forms.Button();
             this.AppEnd_Button = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.FileOpen_button = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.DisplayMode_comboBox = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.status_value = new System.Windows.Forms.Label();
             this.status_label = new System.Windows.Forms.Label();
@@ -72,7 +72,6 @@ namespace FT232H_WinFormApp
             this.SlaveSSD1306RadioButton = new System.Windows.Forms.RadioButton();
             this.SlaveBME280RadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.CommunicationMethod.SuspendLayout();
@@ -102,37 +101,43 @@ namespace FT232H_WinFormApp
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.FileOpen_button);
-            this.groupBox1.Controls.Add(this.pictureBox1);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.DisplayMode_comboBox);
             this.groupBox1.Location = new System.Drawing.Point(73, 162);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(416, 186);
+            this.groupBox1.Size = new System.Drawing.Size(129, 186);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
             // 
-            // FileOpen_button
+            // label2
             // 
-            this.FileOpen_button.Location = new System.Drawing.Point(237, 137);
-            this.FileOpen_button.Name = "FileOpen_button";
-            this.FileOpen_button.Size = new System.Drawing.Size(82, 28);
-            this.FileOpen_button.TabIndex = 3;
-            this.FileOpen_button.Text = "File Open";
-            this.FileOpen_button.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 19);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 15);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "DisplayMode select";
             // 
-            // pictureBox1
+            // DisplayMode_comboBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(65, 49);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(121, 107);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.DisplayMode_comboBox.FormattingEnabled = true;
+            this.DisplayMode_comboBox.Items.AddRange(new object[] {
+            "OnlyDisplayOn",
+            "DisplaySelectedPhoto",
+            "DisplayWriteWords",
+            "DisplayBME280 Data"});
+            this.DisplayMode_comboBox.Location = new System.Drawing.Point(2, 45);
+            this.DisplayMode_comboBox.Name = "DisplayMode_comboBox";
+            this.DisplayMode_comboBox.Size = new System.Drawing.Size(121, 23);
+            this.DisplayMode_comboBox.TabIndex = 0;
+            this.DisplayMode_comboBox.SelectedIndexChanged += new System.EventHandler(this.DisplayMode_comboBox_SelectedIndexChanged);
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.status_value);
             this.groupBox2.Controls.Add(this.status_label);
-            this.groupBox2.Location = new System.Drawing.Point(506, 32);
+            this.groupBox2.Location = new System.Drawing.Point(506, 40);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(266, 67);
             this.groupBox2.TabIndex = 4;
@@ -168,9 +173,9 @@ namespace FT232H_WinFormApp
             this.groupBox3.Controls.Add(this.Humidlity_label);
             this.groupBox3.Controls.Add(this.Templature_value);
             this.groupBox3.Controls.Add(this.Templature_label);
-            this.groupBox3.Location = new System.Drawing.Point(506, 269);
+            this.groupBox3.Location = new System.Drawing.Point(208, 162);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(266, 169);
+            this.groupBox3.Size = new System.Drawing.Size(270, 186);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "BME280 ";
@@ -261,7 +266,7 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.Controls.Add(this.IICRadioButton);
             this.CommunicationMethod.Controls.Add(this.SPIRadioButton);
             this.CommunicationMethod.Controls.Add(this.ComMethod);
-            this.CommunicationMethod.Location = new System.Drawing.Point(506, 114);
+            this.CommunicationMethod.Location = new System.Drawing.Point(506, 130);
             this.CommunicationMethod.Name = "CommunicationMethod";
             this.CommunicationMethod.Size = new System.Drawing.Size(266, 59);
             this.CommunicationMethod.TabIndex = 6;
@@ -306,7 +311,7 @@ namespace FT232H_WinFormApp
             this.groupBox4.Controls.Add(this.SSD1306_RadioButton);
             this.groupBox4.Controls.Add(this.BME280_RadioButton);
             this.groupBox4.Controls.Add(this.label1);
-            this.groupBox4.Location = new System.Drawing.Point(506, 183);
+            this.groupBox4.Location = new System.Drawing.Point(506, 207);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(266, 59);
             this.groupBox4.TabIndex = 7;
@@ -361,7 +366,7 @@ namespace FT232H_WinFormApp
             this.groupBox6.Controls.Add(this.SlaveBME280RadioButton);
             this.groupBox6.Location = new System.Drawing.Point(212, 40);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(160, 107);
+            this.groupBox6.Size = new System.Drawing.Size(266, 107);
             this.groupBox6.TabIndex = 9;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Slave Address";
@@ -408,7 +413,7 @@ namespace FT232H_WinFormApp
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -448,11 +453,11 @@ namespace FT232H_WinFormApp
         private RadioButton SSD1306_RadioButton;
         private RadioButton BME280_RadioButton;
         private Label label1;
-        private PictureBox pictureBox1;
         private GroupBox groupBox5;
         private GroupBox groupBox6;
-        private Button FileOpen_button;
         private RadioButton SlaveSSD1306RadioButton;
         private RadioButton SlaveBME280RadioButton;
+        private Label label2;
+        private ComboBox DisplayMode_comboBox;
     }
 }

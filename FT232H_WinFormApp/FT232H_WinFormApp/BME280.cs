@@ -44,6 +44,11 @@ namespace FT232H_WinFormApp
         public double Pressure;
         public byte ID;
 
+        public byte BME280_GetSlaveAddress(ref byte slaveaddress)
+        {
+            return slaveaddress;
+        }
+
         public void SPI_BME280_Connect()
         {
 

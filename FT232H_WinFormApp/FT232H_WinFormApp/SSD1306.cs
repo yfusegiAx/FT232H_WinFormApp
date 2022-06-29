@@ -17,9 +17,12 @@ using Iot.Device.Ssd13xx.Commands;//ssd13xxを使う
 
 namespace FT232H_WinFormApp
 {
-
-    public class SSD1306
+    public partial class SSD1306
     {
+        public byte SSD1306_GetSlaveAddress(ref byte slaveAddress)
+        {
+            return slaveAddress;
+        }
         public void SPI_SSD1306_Connect(FTDI myFtdiDevice)
         {
             //SPIでSSD1306と通信するときの順序
@@ -50,12 +53,11 @@ namespace FT232H_WinFormApp
                ****stopCondition****
                IIC_SetStopCondition
              */
-            //$"0x{BitConverter.ToString(input, 0, num).Replace("-", " ")}";//binary->hex
-            MessageBox.Show($"0x{slaveAddress}");
+    
             List<byte> code = new List<byte>();
-            IIC_SSD1306_Initialize(myFtdiDevice,code,(0x3C<<1 | 0b0));
+            IIC_SSD1306_Initialize(myFtdiDevice, code, slaveAddress);
             IIC_SSD1306_SendControlBytes(myFtdiDevice,code);
-            IIC_SSD1306_SendDataBytes(myFtdiDevice, code);
+            IIC_SSD1306_SendDataBytes(myFtdiDevice, code, IIC_SwitchCommandForSSD1306Display(Form1.DisplayMode));
             IIC_DownClock(code);
             IIC_SSD1306_SendStopCondition(myFtdiDevice, code);
         }
@@ -81,10 +83,10 @@ namespace FT232H_WinFormApp
             Write_Code(code, myFtdiDevice);
         }
 
-        public void IIC_SSD1306_SendDataBytes(FTDI myFtdiDevice, List<byte> code)
+        public void IIC_SSD1306_SendDataBytes(FTDI myFtdiDevice, List<byte> code, List<byte>databytes)
         {
             IIC_DownClock(code);
-            IIC_OnlyDisplayOn(code);//この部分を自由に変えられるようにしたい
+            IIC_SetDataBytes(code,databytes);
             IIC_SetAck(code);
             Write_Code(code, myFtdiDevice);
         }
@@ -133,6 +135,11 @@ namespace FT232H_WinFormApp
             //co=0(dataのみ送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x80
             code.AddRange(new byte[] { 0x11, 0x00, 0x00, 0x00 });
         }
+        public void IIC_SetDataBytes(List<byte> code,List<byte>databytes)//dataBytesを送る
+        {
+            byte[] bytes = databytes.ToArray();
+            code.AddRange(bytes);
+        }
 
         public void IIC_SetAck(List<byte> code)//ackを送る
         {
@@ -158,17 +165,25 @@ namespace FT232H_WinFormApp
             }
         }
 
-        //8D->14->AF
-        public void IIC_OnlyDisplayOn(List<byte> code)//displayの電源をつけるだけのbyte配列を返す
+        public List<byte > IIC_SwitchCommandForSSD1306Display(string DisplayMode)
         {
-            byte[] commandForOnlyDisplayOn = new byte[] { 0x8D, 0x14, 0xAF };
-            for (int i = 0; i < 3; i++)
+            List<byte> bytes = new List<byte>();
+            switch (DisplayMode)
             {
-                code.AddRange(new byte[] { 0x11, 0x00, 0x00, commandForOnlyDisplayOn[i]
-                                  ,0x80, 0b11111100, 0b11111011//write
-                                  ,0x22, 0x00//+VE data in bits ack
-                                  ,0x80, 0b11111100, 0b11111011 });//write
+                case "OnlyDisplayOn":
+                    bytes = IIC_OnlyDisplayOn();
+                    break;
+                case "DisplaySelectedPhoto":
+                    break;
+                case "DisplayWriteWords":
+                    break;
+                case "DisplayBME280 Data":
+                    break;
+                default:
+                    break;
             }
+            return bytes;
         }
+
     }
 }
