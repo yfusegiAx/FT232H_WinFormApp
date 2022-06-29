@@ -41,8 +41,7 @@ namespace FT232H_WinFormApp
         /// </summary>
         private void InitializeComponent()
         {
-            this.SSD1306_Button = new System.Windows.Forms.Button();
-            this.BMP280_Button = new System.Windows.Forms.Button();
+            this.DeviceConnect_Button = new System.Windows.Forms.Button();
             this.AppEnd_Button = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -60,7 +59,7 @@ namespace FT232H_WinFormApp
             this.Templature_value = new System.Windows.Forms.Label();
             this.Templature_label = new System.Windows.Forms.Label();
             this.CommunicationMethod = new System.Windows.Forms.GroupBox();
-            this.I2CRadioButton = new System.Windows.Forms.RadioButton();
+            this.IICRadioButton = new System.Windows.Forms.RadioButton();
             this.SPIRadioButton = new System.Windows.Forms.RadioButton();
             this.ComMethod = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -76,25 +75,15 @@ namespace FT232H_WinFormApp
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
-            // SSD1306_Button
+            // DeviceConnect_Button
             // 
-            this.SSD1306_Button.Location = new System.Drawing.Point(59, 375);
-            this.SSD1306_Button.Name = "SSD1306_Button";
-            this.SSD1306_Button.Size = new System.Drawing.Size(100, 42);
-            this.SSD1306_Button.TabIndex = 0;
-            this.SSD1306_Button.Text = "SSD1306 Connect";
-            this.SSD1306_Button.UseVisualStyleBackColor = true;
-            this.SSD1306_Button.Click += new System.EventHandler(this.SSD1306_Button_Click);
-            // 
-            // BMP280_Button
-            // 
-            this.BMP280_Button.Location = new System.Drawing.Point(212, 378);
-            this.BMP280_Button.Name = "BMP280_Button";
-            this.BMP280_Button.Size = new System.Drawing.Size(105, 41);
-            this.BMP280_Button.TabIndex = 1;
-            this.BMP280_Button.Text = "BMP280 Connect";
-            this.BMP280_Button.UseVisualStyleBackColor = true;
-            this.BMP280_Button.Click += new System.EventHandler(this.BMP280_Button_Click);
+            this.DeviceConnect_Button.Location = new System.Drawing.Point(212, 378);
+            this.DeviceConnect_Button.Name = "DeviceConnect_Button";
+            this.DeviceConnect_Button.Size = new System.Drawing.Size(105, 41);
+            this.DeviceConnect_Button.TabIndex = 1;
+            this.DeviceConnect_Button.Text = "Device Connect";
+            this.DeviceConnect_Button.UseVisualStyleBackColor = true;
+            this.DeviceConnect_Button.Click += new System.EventHandler(this.DeviceConnect_Button_Click);
             // 
             // AppEnd_Button
             // 
@@ -115,7 +104,7 @@ namespace FT232H_WinFormApp
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            //this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // pictureBox1
             // 
@@ -153,7 +142,7 @@ namespace FT232H_WinFormApp
             this.status_label.Size = new System.Drawing.Size(42, 15);
             this.status_label.TabIndex = 0;
             this.status_label.Text = "Status:";
-            this.status_label.Click += new System.EventHandler(this.label1_Click);
+            //this.status_label.Click += new System.EventHandler(this.label1_Click);
             // 
             // groupBox3
             // 
@@ -172,7 +161,7 @@ namespace FT232H_WinFormApp
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "BME280 ";
-            this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            //this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
             // hectopascal_hPa
             // 
@@ -209,7 +198,7 @@ namespace FT232H_WinFormApp
             this.Pressure_value.Size = new System.Drawing.Size(13, 15);
             this.Pressure_value.TabIndex = 5;
             this.Pressure_value.Text = "0";
-            this.Pressure_value.Click += new System.EventHandler(this.Hectpascal_value_Click);
+           // this.Pressure_value.Click += new System.EventHandler(this.Hectpascal_value_Click);
             // 
             // Pressure_label
             // 
@@ -258,7 +247,7 @@ namespace FT232H_WinFormApp
             // 
             // CommunicationMethod
             // 
-            this.CommunicationMethod.Controls.Add(this.I2CRadioButton);
+            this.CommunicationMethod.Controls.Add(this.IICRadioButton);
             this.CommunicationMethod.Controls.Add(this.SPIRadioButton);
             this.CommunicationMethod.Controls.Add(this.ComMethod);
             this.CommunicationMethod.Location = new System.Drawing.Point(506, 114);
@@ -268,17 +257,17 @@ namespace FT232H_WinFormApp
             this.CommunicationMethod.TabStop = false;
             this.CommunicationMethod.Text = "CommunicationMethod";
             // 
-            // I2CRadioButton
+            // IICRadioButton
             // 
-            this.I2CRadioButton.AutoSize = true;
-            this.I2CRadioButton.Location = new System.Drawing.Point(154, 26);
-            this.I2CRadioButton.Name = "I2CRadioButton";
-            this.I2CRadioButton.Size = new System.Drawing.Size(41, 19);
-            this.I2CRadioButton.TabIndex = 2;
-            this.I2CRadioButton.TabStop = true;
-            this.I2CRadioButton.Text = "I2C";
-            this.I2CRadioButton.UseVisualStyleBackColor = true;
-            this.I2CRadioButton.CheckedChanged += new System.EventHandler(this.I2CRadioButton_CheckedChanged);
+            this.IICRadioButton.AutoSize = true;
+            this.IICRadioButton.Location = new System.Drawing.Point(154, 26);
+            this.IICRadioButton.Name = "IICRadioButton";
+            this.IICRadioButton.Size = new System.Drawing.Size(38, 19);
+            this.IICRadioButton.TabIndex = 2;
+            this.IICRadioButton.TabStop = true;
+            this.IICRadioButton.Text = "IIC";
+            this.IICRadioButton.UseVisualStyleBackColor = true;
+            this.IICRadioButton.CheckedChanged += new System.EventHandler(this.IICRadioButton_CheckedChanged);
             // 
             // SPIRadioButton
             // 
@@ -365,11 +354,10 @@ namespace FT232H_WinFormApp
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.AppEnd_Button);
-            this.Controls.Add(this.BMP280_Button);
-            this.Controls.Add(this.SSD1306_Button);
+            this.Controls.Add(this.DeviceConnect_Button);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            //this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
@@ -385,9 +373,7 @@ namespace FT232H_WinFormApp
         }
 
         #endregion
-
-        private Button SSD1306_Button;
-        private Button BMP280_Button;
+        private Button DeviceConnect_Button;
         private Button AppEnd_Button;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
@@ -405,7 +391,7 @@ namespace FT232H_WinFormApp
         private Label Templature_degrees;
         private GroupBox CommunicationMethod;
         private Label ComMethod;
-        private RadioButton I2CRadioButton;
+        private RadioButton IICRadioButton;
         private RadioButton SPIRadioButton;
         private GroupBox groupBox4;
         private RadioButton radioButton1;
