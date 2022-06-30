@@ -19,7 +19,18 @@ namespace FT232H_WinFormApp
 {
     public partial class SSD1306:FTDI_CommonFunction
     {
-        public byte SSD1306_GetSlaveAddress(ref byte slaveAddress)
+        public byte slaveAddress;
+        public object DisplayMode;
+
+        public SSD1306(FTDI ft, byte sa) {
+            if(ft != null)
+            {
+                myFtdiDevice = ft;
+                slaveAddress = sa;
+            }
+        }
+
+        public byte SSD1306_SetSlaveAddress()
         {
             return slaveAddress;
         }
@@ -27,7 +38,7 @@ namespace FT232H_WinFormApp
         {
             //SPIでSSD1306と通信するときの順序
         }
-        public void IIC_SSD1306_Connect(FTDI myFtdiDevice,byte slaveAddress)
+        public void IIC_SSD1306_Connect(object mode)
         {
             //IICでSSD1306と通信するときの順序
             /*
@@ -53,124 +64,114 @@ namespace FT232H_WinFormApp
                ****stopCondition****
                IIC_SetStopCondition
              */
+            //List<byte> addData = new List<byte>();//displaymodeを複数
+
+
             List<byte> code = new List<byte>();
-            IIC_SSD1306_Initialize(myFtdiDevice, code, slaveAddress);
-            IIC_SSD1306_SendControlBytes(myFtdiDevice,code);
-            IIC_SSD1306_SendDataBytes(myFtdiDevice, code, IIC_SwitchCommandForSSD1306Display(Form1.DisplayMode));
-            IIC_DownClock(code);
-            IIC_SSD1306_SendStopCondition(myFtdiDevice, code);
+            IIC_Initialize(code);
+            IIC_SendControlBytes(code);
+            IIC_SendDataBytes(code);
+            IIC_SendStopCondition(code);
+            Write_Code(code);
         }
 
 
         /////////SSD1306でIIC通信をする際に使うプロパティ ///////////
 
-        public void IIC_SSD1306_Initialize(FTDI myFtdiDevice, List<byte> code, byte slaveAddress)
+        public void IIC_Initialize(List<byte> op)
         {
-            IIC_SetClock(code);
-            ResetPins(code);
-            IIC_StartCondition(code);
-            IIC_DownClock(code);
-            IIC_SetSA0(code,slaveAddress);
-            IIC_DownClock(code);
-            IIC_SetAck(code);
-            Write_Code(code, myFtdiDevice);
+            IIC_SetClock(op);
+            ResetPins(op);
+            IIC_StartCondition(op);
+            DownClock(op);
+            IIC_SetSA0(op, slaveAddress);
+            DownClock(op);
+            IIC_SetAck(op);
         }
 
-        public void IIC_SSD1306_SendControlBytes(FTDI myFtdiDevice, List<byte> code)
+        public void IIC_SendControlBytes(List<byte> op)
         {
-            IIC_DownClock(code);
-            IIC_SetControlBytes(code);
-            IIC_SetAck(code);
-            Write_Code(code, myFtdiDevice);
+            DownClock(op);
+            IIC_SetControlBytes(op);
+            IIC_SetAck(op);
         }
 
-        public void IIC_SSD1306_SendDataBytes(FTDI myFtdiDevice, List<byte> code, List<byte>databytes)
+        public void IIC_SendDataBytes(List<byte> op)
         {
-            IIC_DownClock(code);
-            IIC_SetDataBytes(code,databytes);
-            IIC_SetAck(code);
-            Write_Code(code, myFtdiDevice);
+            DownClock(op);
+            IIC_SetDataBytes(op, SwitchCommandForSSD1306Display(DisplayMode));
+            IIC_SetAck(op);
         }
 
-        public void IIC_SSD1306_SendStopCondition(FTDI myFtdiDevice, List<byte> code)
+        public void IIC_SendStopCondition(List<byte> op)
         {
-            IIC_SetStopCondition(code);
-            Write_Code(code, myFtdiDevice);
+            DownClock(op);
+            IIC_SetStopCondition(op);
         }
-
-        public void IIC_SetClock(List<byte> code)//8C...IIC通信には必須 86...clockの速度の調節
+        public void IIC_SetClock(List<byte> op)//8C...IIC通信には必須 86...clockの速度の調節
         {
-            code.AddRange(new byte[] { 0x8C, 0x86, 0x0E, 0x00 });//400kbits/1cycleに設定
+            op.AddRange(new byte[] { 0x8C, 0x86, 0x0E, 0x00 });//400kbits/1cycleに設定
         }
-
-        public void ResetPins(List<byte> code)//pinをすべてhighにする
-        {
-            //初期化 scl,sdaがhigh時 
-            //0x80...output GPIO pin is lowbyte not output databytes
-            //                         hex   value H/L    direction I/O     
-            code.AddRange(new byte[] { 0x80, 0b11111111, 0b11111011 });
-        }
-
-        public void IIC_StartCondition(List<byte> code)//start conditionを定義する
+        public void IIC_StartCondition(List<byte> op)//start conditionを定義する
         {
             //scl=high,sda=low  
-            code.AddRange(new byte[] { 0x80, 0b11111101, 0b11111011 });
+            op.AddRange(new byte[] { 0x80, 0b11111101, 0b11111011 });
         }
 
-        public void IIC_DownClock(List<byte> code)//clockを落とす
-        {
-            code.AddRange(new byte[] { 0x80, 0b11111100, 0b11111011 });
-        }
-
-        public void IIC_SetSA0(List<byte> code, byte slaveAddress)//SA0を送る
+        public void IIC_SetSA0(List<byte> op, byte slaveAddress)//SA0を送る
         {
             //sa0(スレーブアドレス) + R/W#（read/write）を送る
             //sa0= 0111 101*          R/W#=0 =>01111010=>アドレスはFTDIにとっては0x7A　スレーブにとっては0x3D
             //sa0= 0111 100* (今回は) R/W#=0 =>01111000=>送るデータは0x78　スレーブにとっては0x3C
             //(0x3C << 1) | 0b0
-            code.AddRange(new byte[] { 0x11, 0x00, 0x00, slaveAddress });//-VE write databyte output
+            op.AddRange(new byte[] { 0x11, 0x00, 0x00, slaveAddress });//-VE write databyte output
         }
 
-        public void IIC_SetControlBytes(List<byte> code)//controlBytesを送る
+        public void IIC_SetControlBytes(List<byte> op)//controlBytesを送る
         {
             //co=0(dataのみ送る) + dc=0(command) +controlbyte=000000 =1000 0000 =>0x80
-            code.AddRange(new byte[] { 0x11, 0x00, 0x00, 0x00 });
+            op.AddRange(new byte[] { 0x11, 0x00, 0x00, 0x00 });
         }
-        public void IIC_SetDataBytes(List<byte> code,List<byte>databytes)//dataBytesを送る
+        public void IIC_SetDataBytes(List<byte> op, List<byte>bytes)//dataBytesを送る
         {
-            byte[] bytes = databytes.ToArray();
-            code.AddRange(bytes);
+            bytes.ToArray();
+            op.AddRange(bytes);
         }
 
-        public void IIC_SetAck(List<byte> code)//ackを送る
+        public void IIC_SetAck(List<byte> op)//ackを送る
         {
             //data output by recerver for ack signal
-            code.AddRange(new byte[] { 0x22, 0x00 });//22...+VE data in bits
+            op.AddRange(new byte[] { 0x22, 0x00 });//22...+VE data in bits
         }
 
-        public void IIC_SetStopCondition(List<byte> code)
+        public void IIC_SetStopCondition(List<byte> op)
         {
             //先にsdaを上げる             //sda->scl
-            code.AddRange(new byte[] { 0x80, 0b11111101, 0b11111011, 0x80, 0b11111111, 0b11111011 });
+            op.AddRange(new byte[] { 0x80, 0b11111101, 0b11111011, 0x80, 0b11111111, 0b11111011 });
         }
 
-        
-
-        public List<byte > IIC_SwitchCommandForSSD1306Display(string DisplayMode)
+        public List<byte> SwitchCommandForSSD1306Display(object DisplayMode)
         {
             List<byte> bytes = new List<byte>();
             switch (DisplayMode)
             {
                 case "OnlyDisplayOn":
-                    bytes = IIC_OnlyDisplayOn();
+                    bytes = OnlyDisplayOn();
                     break;
-                case "DisplaySelectedPhoto":
+                case "OnlyDisplayOff":
+                    bytes = OnlyDisplayOff();
+                    break;
+                case "DisplaySelectedPicture":
+                    bytes = DisplaySelectedPicture();
                     break;
                 case "DisplayWriteWords":
+                    bytes = DisplayWriteWords();
                     break;
                 case "DisplayBME280 Data":
+                    bytes = DisplayBME280Data();
                     break;
                 default:
+                    MessageBox.Show("error : display mode");
                     break;
             }
             return bytes;

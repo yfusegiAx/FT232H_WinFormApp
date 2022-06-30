@@ -124,7 +124,8 @@ namespace FT232H_WinFormApp
             this.DisplayMode_comboBox.FormattingEnabled = true;
             this.DisplayMode_comboBox.Items.AddRange(new object[] {
             "OnlyDisplayOn",
-            "DisplaySelectedPhoto",
+            "OnlyDisplayOff",
+            "DisplaySelectedPicture",
             "DisplayWriteWords",
             "DisplayBME280 Data"});
             this.DisplayMode_comboBox.Location = new System.Drawing.Point(2, 45);

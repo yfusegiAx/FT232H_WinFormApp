@@ -43,14 +43,74 @@ namespace FT232H_WinFormApp
         public double Humidity;
         public double Pressure;
         public byte ID;
+        public uint readOnlyBufNum = 0;//読み込み用バッファ
 
-        public byte BME280_GetSlaveAddress(ref byte slaveaddress)
+        public byte BME280_GetSlaveAddress()
         {
-            return slaveaddress;
+            return 0;
+        }
+        //読み込み順は温度ー＞圧力ー＞湿度
+        public void SPI_BME280_Connect()
+        {
+            List<byte> code = new List<byte>();
+            List<byte> checkbytes = new List<byte>();
+            byte[] codebytes;
+            byte[] readData;
+            //code = new byte[] { 0x80, 0b11111111, 0xFF };//adbus0~adbus7から1を送る
+            uint written = 0;
+            byte sendData = 0x88;//送るデータ
+            uint readOnlyBufNum = 0;//読み込み用バッファ
+            code.AddRange( new byte[] { 0x86, 0b00000100, 0b11111011 });//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            code.AddRange( new byte[] { 0x80, 0b11111111, 0b11111011 });//pinをリセット..通信前に状態をリセットできる 0x80...output lowbyte
+            code.AddRange( new byte[] { 0x80, 0b11110111, 0b11111011 });//adbus2をlowにすることで通信したいスレーブを選択できるようになる
+            code.AddRange( new byte[] { 0x80, 0b11110110, 0b11111011 });//adbus0=0にする クロックを送るため
+            code.AddRange( new byte[] { 0x11, 0x01, 0x00, 0x72, 0x01 });//0(write) F2(11110010) value(00000001) :over sampling x1==>01110010 00000001=>0x72に0x01を書き込みをするバイト配列
+            Write_Code(code);
+
+            checkbytes.AddRange(new byte[] { 0x11, 0x01, 0x00, 0x74, 0x27 });//0(書き込みモード) F4に　valueを書き込みをするバイト配列
+            codebytes = checkbytes.ToArray();
+            myFtdiDevice.Write(codebytes, codebytes.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
+
+            code.AddRange(new byte[] { 0x11, 0x00, 0x00, sendData });//data output buffer :+VE時にクロックを送る、1byteのデータを送る、sendDataというデータを送るためのbyte配列
+            Write_Code(code);
+
+            checkbytes.AddRange(new byte[] { 0x20, 0x79, 0x00 });//data input buffer :-VE時にクロックを送る、この時点ではクロックは出ていない 0x0078+1読み取る設定
+            codebytes=checkbytes.ToArray();
+            myFtdiDevice.Write(codebytes, codebytes.Length, ref readOnlyBufNum);//クロック立ち上がる 命令を書き込み　
+
+            code.AddRange(new byte[] { 0x80, 0b11111110, 0b11111011 });//csが１になる　スレーブとのやり取りの終了
+            code.AddRange(new byte[] { 0x80, 0b11111111, 0b11111011 });//reset のための配列
+            Write_Code(code);
+
+            Thread.Sleep(100);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            if (myFtdiDevice.GetRxBytesAvailable(ref readOnlyBufNum) == FTDI.FT_STATUS.FT_OK)
+            {
+                Debug.WriteLine($"readonlybufnum={readOnlyBufNum}");
+                readData = new byte[readOnlyBufNum];//読み込んだデータを格納するためのbyte配列 new byteでmallocしている
+                myFtdiDevice.Read(readData, readOnlyBufNum, ref readOnlyBufNum);//ここで読み込む byte[] dataBuffer,uint numBytesToRead,ref uint numBytesRead
+                                                                                //データを格納するバッファ、デバイスから要求されたバイト数、実際読み込まれるバイト数
+                if (readOnlyBufNum <= 0x78)
+                {
+                    Debug.WriteLine($"readData = NO DATA");
+                    return;
+                }
+                else
+                {
+                    Debug.WriteLine($"readData = 0x{readData[0]:X02}");
+                }
+            }
+            else
+            {
+                return;
+            }
+            BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
+            Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
+            BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray());//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
         }
 
         public void SPI_BME280_Connect(FTDI myFtdiDevice)
         {
+            //SPIでBME280と通信するときの順序
             //SPIでBME280と通信するときの順序
             //SPI通信でBMPとやり取りする
             byte[] code, readData;
@@ -118,11 +178,15 @@ namespace FT232H_WinFormApp
             BME280_Calib(readData);//IDを返す dig..の値の初期化 0x60が返ってこないと湿度は読み取れない なぜ60が返ってくる?
             Thread.Sleep(10);//FT232Hが反応するのに2ミリ秒かかるため待ってあげる　100byteくらいが上限
             BME280_Calc(readData.Skip(0xF7 - 0x88).ToArray());//元々0x88からスタートするところを0xF7-0x88番目まで起点をスキップ
+
         }
         public void IIC_BME280_Connect(FTDI myFtdiDevice)
         {
+            //bus0=scl,bus1=sda
             //IICでBME280と通信するときの順序
         }
+
+        
 
         public void BME280_Calib(byte[] rawData)
         {
@@ -172,9 +236,6 @@ namespace FT232H_WinFormApp
             Temprature = BME280_compensate_T_double(adc_T);
             Pressure = BME280_compensate_P_double(adc_P);
             Humidity = BME280_compensate_H_double(adc_H);
-            Form1.BME280_data.SetValue(Temprature,0);
-            Form1.BME280_data.SetValue(Pressure,1);
-            Form1.BME280_data.SetValue(Humidity,2);
         }
 
 

@@ -14,33 +14,27 @@ using System.Diagnostics;
 
 namespace FT232H_WinFormApp
 {
-
     public partial class Form1 : Form
     {
-        public static bool SPI_connect = false;
-        public static bool IIC_connect = false;
-        public static bool BME280_connect = false;
-        public static bool SSD1306_connect = false;
-        public static bool DisplayModeSelected = false;
-        public static byte slaveAddress;
-        public static double[] BME280_data = new double[3];
-        public static string DisplayMode;
+        public bool SPI_connect = false;
+        public bool IIC_connect = false;
+        public bool BME280_connect = false;
+        public bool SSD1306_connect = false;
+        public bool DisplayModeSelected = false;
 
-        FTDI myFtdiDevice = new FTDI();//ftdi製品を使うためのインスタンス生成
-        FTDI_CommonFunction commonFunction = new FTDI_CommonFunction();
-        BME280 bme280 = new BME280();
-        SSD1306 ssd1306 = new SSD1306();
-        //driverの定義
-        FTDI.FT_STATUS ftStatus;//通信可能な状態
+        public FTDI myFtdiDevice = new FTDI();//ftdi製品を使うためのインスタンス生成 publicの場合はvarで宣言できない
+        public FTDI_CommonFunction commonFunction = new FTDI_CommonFunction();
+        public BME280 bme280 = new BME280();
+        public SSD1306 ssd1306;
+        FTDI.FT_STATUS ftStatus;//デバイスの接続状況を取得する
         uint deviceCount = 0;
 
-        // Create new instance of the FTDI device class
-        //FTDIデバイスクラスのインスタンス生成
-        //デバイスクラス..usbインターフェースが所持している製品情報
         public Form1()
         {       
             InitializeComponent();
-            
+
+            ssd1306 = new SSD1306(myFtdiDevice, 0x3C << 1);
+
             myFtdiDevice.OpenByIndex(0);//0番目に接続したデバイスにアクセス
 
             // Update the Status text line
@@ -74,7 +68,7 @@ namespace FT232H_WinFormApp
         private void SPIRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             //SPI通信を始める
-            RadioButton rb = sender as RadioButton;
+            var rb = sender as RadioButton;
             if (rb == null)
             {
                 MessageBox.Show("Please select communication standard");
@@ -91,7 +85,7 @@ namespace FT232H_WinFormApp
         private void IICRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             //I2C通信を始める
-            RadioButton rb = sender as RadioButton;
+            var rb = sender as RadioButton;
             if (rb == null)
             {
                 MessageBox.Show("Please select communication standard");
@@ -108,7 +102,7 @@ namespace FT232H_WinFormApp
         private void BME280_RadioButton_CheckedChanged(object sender, EventArgs e)
         {
             //BME280と通信する
-            RadioButton rb = sender as RadioButton;
+            RadioButton? rb = sender as RadioButton;
             if (rb == null)
             {
                 MessageBox.Show("Please select device for communication");
@@ -125,7 +119,7 @@ namespace FT232H_WinFormApp
         private void SSD1306_RadioButton_CheckedChanged(object sender, EventArgs e)
         {
             //SSD1306と通信する
-            RadioButton rb = sender as RadioButton;
+            RadioButton? rb = sender as RadioButton;
             if (rb == null)
             {
                 MessageBox.Show("Please select device for communication");
@@ -144,10 +138,13 @@ namespace FT232H_WinFormApp
             //指定した通信規格とデバイスで通信をはじめる
             if (SPI_connect==true && BME280_connect==true)
             {
-                bme280.SPI_BME280_Connect(myFtdiDevice);
-                Templature_value.Text = $"{Math.Round(BME280_data[0], 3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
-                Pressure_value.Text = $"{Math.Round(BME280_data[1] / 100.0, 3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
-                Humidlity_value.Text = $"{Math.Round(BME280_data[2], 3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
+                //connect関数と値を取得する関数は分けたほうがいい
+                //bme280.SPI_BME280_Connect(myFtdiDevice);
+                bme280.SPI_BME280_Connect();
+
+                Templature_value.Text = $"{Math.Round(bme280.Temprature, 3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
+                Pressure_value.Text = $"{Math.Round(bme280.Pressure / 100.0, 3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
+                Humidlity_value.Text = $"{Math.Round(bme280.Humidity, 3)}";//BME280で取得した値の表示：湿度 キャリブレーション後の値
             }
             else if (SPI_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
@@ -159,7 +156,7 @@ namespace FT232H_WinFormApp
             }
             else if (IIC_connect == true && SSD1306_connect == true && DisplayModeSelected == true)
             {
-                ssd1306.IIC_SSD1306_Connect(myFtdiDevice,(0x3C<<1 | 0b0));
+                ssd1306.IIC_SSD1306_Connect(ssd1306.DisplayMode);
             }
             else
             {
@@ -179,7 +176,6 @@ namespace FT232H_WinFormApp
             catch
             {
                 status_value.Text = "Driver not loaded";
-
                 DeviceConnect_Button.Enabled = false;
                 AppEnd_Button.Enabled = true;
             }
@@ -189,21 +185,20 @@ namespace FT232H_WinFormApp
 
         private void SlaveBME280RadioButton_CheckedChanged(object sender, EventArgs e)//slaveaddressを設定する
         {
-            slaveAddress = 0x76;
-            bme280.BME280_GetSlaveAddress(ref slaveAddress);
+            //slaveAddress = 0x76;
+            bme280.BME280_GetSlaveAddress();
         }
 
         private void SlaveSSD1306RadioButton_CheckedChanged(object sender, EventArgs e)//slaveaddressを設定する
         {
-            slaveAddress = (0x3C<<1 | 0b0);
-            ssd1306.SSD1306_GetSlaveAddress(ref slaveAddress);
+            //slaveAddress = (0x3C<<1 | 0b0);
+            //ssd1306.SSD1306_GetSlaveAddress();
         }
 
         private void DisplayMode_comboBox_SelectedIndexChanged(object sender, EventArgs e)//displaymodeを選択したときの動作
         {
             DisplayModeSelected = true;
-            DisplayMode = DisplayMode_comboBox.SelectedItem.ToString();
+            ssd1306.DisplayMode = DisplayMode_comboBox.SelectedItem;
         }
-
     }
 }
