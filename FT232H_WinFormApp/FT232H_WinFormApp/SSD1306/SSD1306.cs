@@ -156,10 +156,10 @@ namespace FT232H_WinFormApp
             switch (DisplayMode)
             {
                 case "OnlyDisplayOn":
-                    bytes = OnlyDisplayOn();
+                    bytes = OnlyDisplayOnOff(0xAF);
                     break;
                 case "OnlyDisplayOff":
-                    bytes = OnlyDisplayOff();
+                    bytes = OnlyDisplayOnOff(0xAE);
                     break;
                 case "DisplaySelectedPicture":
                     bytes = DisplaySelectedPicture();
