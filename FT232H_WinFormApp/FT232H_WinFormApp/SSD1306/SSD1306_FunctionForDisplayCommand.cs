@@ -77,6 +77,7 @@ namespace FT232H_WinFormApp
             SetNormalDisplay(0xA6);
             SetDisplayClockDivideAndRatioOscillatorFrequency(0x80);
             SetDisplayOnOff(0xAF);
+            SetDisplay();
             return databytes;
         }
         public List<byte> DisplayWriteWords()//displayにGUIで入力した文字列を表示する
@@ -115,7 +116,7 @@ namespace FT232H_WinFormApp
         public void SetDisplayStartline(byte b)//書き込み開始ライン
         {
             //0 1 X5 X4 X3 X2 X1 X0
-            //0x40なら0からスタート
+            //0x40なら0からスタート 0=>COM0
             byte[] dataForSend = new byte[] { b };
             databytesAddRange(dataForSend);
         }
@@ -148,6 +149,8 @@ namespace FT232H_WinFormApp
             //A5..0=reset disable remap Left/Right remap
             //A5..1=enable remap Left/Right remap
             //00=0x0A 01=0x1A 10=0xAA 11=0xBA
+
+            //c0/c8 ,A4,A5でpinの構成は8通り作れる
             byte[] dataForSend = new byte[] { 0xDA,b};
             databytesAddRange(dataForSend);
         }
@@ -180,8 +183,9 @@ namespace FT232H_WinFormApp
         public void SetDisplayClockDivideAndRatioOscillatorFrequency(byte b)
         {
             //A[3:0] ..define the divide ratio of the display clock 
-            //0000b=1 
+            //0000b=1 1 to 16
             //A[7:4]..set the ocillater freaquency 
+            //1000b=reset 16paterns
             byte[] dataForSend = new byte[] { 0xD5,0x80};
             databytesAddRange(dataForSend);
 
@@ -190,6 +194,13 @@ namespace FT232H_WinFormApp
         {
             //8D->14->AFで点灯　8D->14->AEで消灯
             byte[] dataForSend = new byte[] { 0x8D, 0x14,　b };
+            databytesAddRange(dataForSend);
+        }
+
+        public void SetDisplay()
+        {
+            //8D->14->AFで点灯　8D->14->AEで消灯
+            byte[] dataForSend = new byte[] { 0x81,0xFF};
             databytesAddRange(dataForSend);
         }
 

@@ -50,6 +50,7 @@ namespace FT232H_WinFormApp
             return 0;
         }
         //読み込み順は温度ー＞圧力ー＞湿度
+        
         public void SPI_BME280_Connect()
         {
             List<byte> code = new List<byte>();

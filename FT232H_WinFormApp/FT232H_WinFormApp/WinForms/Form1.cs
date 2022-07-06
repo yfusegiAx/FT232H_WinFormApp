@@ -140,7 +140,7 @@ namespace FT232H_WinFormApp
             {
                 //connect関数と値を取得する関数は分けたほうがいい
                 //bme280.SPI_BME280_Connect(myFtdiDevice);
-                bme280.SPI_BME280_Connect();
+                bme280.SPI_BME280_Connect(myFtdiDevice);
 
                 Templature_value.Text = $"{Math.Round(bme280.Temprature, 3)}";//BME280で取得した値の表示：温度 キャリブレーション後の値
                 Pressure_value.Text = $"{Math.Round(bme280.Pressure / 100.0, 3)}";//BME280で取得した値の表示：気圧 キャリブレーション後の値
