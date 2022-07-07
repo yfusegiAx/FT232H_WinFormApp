@@ -18,7 +18,17 @@ namespace FT232H_WinFormApp
     disable entire display on A4h 
     set normal display A6h
     set display clock divide And ratio oscillator frequency D5h,80h
-    set display on/off 8D->14->AF/E
+    set display on/off 8D->14->AF/E ->light on
+
+    Set Memory Addressing Mode 20h ->B0h~B7h 00h~07h
+    Set Column Address         21h
+    Set Page Address           22h
+
+    ***option***
+    Horizontal Scroll Setup 26h/27
+    Continuous Vertical and Horizontal Scroll Setup 29h/2Ah
+    Activate/Deactivate Scroll            2E/2Fh
+    Set Vertical Scroll Area   A3h 
 
     first           page       remap
     page0(com0-7)   page0  page0(com63-56)
@@ -204,7 +214,154 @@ namespace FT232H_WinFormApp
             databytesAddRange(dataForSend);
         }
 
+        public void SetMemoryAddressingMode()
+        {
+            //20h
+            /*ssd1306には3種類のアドレスモードがある
+              1:page addressing mode 
+              2:horizon addressing mode
+              3:vertical addressing mode
+             このうち一つを選ぶ
+             COL=graphic display data RAM column
+             B0h~B7hコマンドで目的の表示位置のpage start addressを設定
+             00h~07hコマンドで下位ビット->10h~1Fhで上位ビット、
+             書き込みを開始するカラムのアドレス（ページアドレス）を設定
+                         */
+            byte[] dataForSend = new byte[] { 0x20,0xB2 };
+            databytesAddRange(dataForSend);
+        }
 
+        public void SetColumnAddress()
+        {
+            //21h
+            /*
+             3byte
+            カラムのstart address,end address,現在のR/W address
+            表示するRAMデータのR/Wの設定
+            20ｈの続きの記述?
+            カラムの最後まで行ったときにまた最初に戻れる？
+             */
+            byte[] dataForSend = new byte[] {0x00,0xFF,0x21};
+            databytesAddRange(dataForSend);
+        }
+
+        public void SetPageAddress()
+        {
+            //22h
+            byte[] dataForSend = new byte[] { 0x00, 0xFF, 0x22 };
+            databytesAddRange(dataForSend);
+        }
+        //**** option ****
+        public void HorizontalScrollSetup()
+        {
+            //26h/27
+            //上昇するスクローリングのパラメータを構成する複数の連続したバイトで構成される
+            //スクローリングのstartpage,stoppage,scrolling speedを決めることが出来る
+            //hirizontal scroll はright/left
+            byte[] dataForSend = new byte[] {0x26, 0x00, 0x00, 0x00 };
+            databytesAddRange(dataForSend);
+        }
+        public void ContinuousVerticalAndHorizontalScrollSetup()
+        {
+            //29h/2Ah
+            /*６bytesで構成される
+            継続的に垂直方向に変化するパラメータ、スクローリング開始ページ、終了ページ、スクロールスピード、
+            垂直スクローリングの開始地点を決める
+            すべてのバイト配列を合わせるとhorizontalかつverticalなスクローリングができる
+            E[5:0]を０にするとhirizontalスクローリングだけ可能になる
+            */
+
+        }
+
+        public void ActivateOrDeactivateScroll(byte b)
+        {
+            //2Fh => on 2E => off
+            byte[] dataForSend = new byte[] {b};
+            databytesAddRange(dataForSend);
+        }
+        public void SetVerticalScrollArea()
+        {
+            //A3h
+            //連続した３bytesで垂直方向のスクローリングする範囲を決める
+            byte[] dataForSend = new byte[] {0x00,0x00,0x00};
+            databytesAddRange(dataForSend);
+        }
     }
 
 }
+/*
+ private void print_oled2(List<byte> hfData, uint LineFrom, uint LineTo)
+        {
+            var rangeData = new List<byte>();
+            rangeData.Add(0x00);//control byte
+            tool.AddListDataData(rangeData, 0x200021007F);
+            I2C_Send(rangeData);
+
+            rangeData = new List<byte>();
+            rangeData.Add(0x00);//control byte
+            tool.AddListDataData(rangeData, 0x220000u | (LineFrom << 8) | LineTo);//upper font 
+            I2C_Send(rangeData);
+
+            var opFontData = new List<byte>();
+            opFontData.Add(0x40);//control byte
+            opFontData.AddRange(hfData);// lower font()
+            I2C_Send(opFontData);
+        }
+        public void print_oled(List<byte> hfData, uint LineFrom, uint LineTo, uint from, uint to)
+        {
+            var rangeData = new List<byte>();
+            rangeData.Add(0x00);//control byte
+            tool.AddListDataData(rangeData, 0x2000210000u| (from << 8) | to);
+            I2C_Send(rangeData);
+
+            rangeData = new List<byte>();
+            rangeData.Add(0x00);//control byte
+            tool.AddListDataData(rangeData, 0x220000u | (LineFrom << 8) | LineTo);//upper font 
+            I2C_Send(rangeData);
+
+            var opFontData = new List<byte>();
+            opFontData.Add(0x40);//control byte
+            opFontData.AddRange(hfData);// lower font()
+            I2C_Send(opFontData);
+        }
+         /// <summary>
+        /// String からフォント画像作成、出力。
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="LineRow"></param>
+        /// <returns></returns>
+        public Bitmap print_oledBmp(string text, uint LineRow)
+        {
+            var bfont = BmpFont(text);
+            var fData = BitmapToRawBit(bfont);
+
+            var listfData = fData.ToList();
+            listfData.Insert(0, 0x40);//コントロールバイトの追加。
+            print_oledfontOneLineLeft(listfData, LineRow,0);
+            return bfont;
+        }
+        // <summary>
+        /// フォント画像(主に128x8px)を2値化して、byte配列に変換する。
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public byte[] BitmapToRawBit(Bitmap image)
+        {
+            var thsByte = new byte[(image.Width * image.Height / 8)];
+            for (int y = 0; y < image.Height; y++)
+            {
+                int thpos = 0;
+                int byteH = (y / 8);
+                Color color;
+                for (int x = 0; x < image.Width; x++)
+                {
+                    thpos = (int)(byteH * image.Width + x);
+                    color = image.GetPixel(x, y);
+                    thsByte[thpos] += (byte)(color.R > thres ? 0x01 << (y % 8) : 0x00);//B
+                    //Console.WriteLine($"{x},{y},{0x01 << (y % 8):x2}");
+                }
+            }
+            return thsByte;
+        }
+
+ */
