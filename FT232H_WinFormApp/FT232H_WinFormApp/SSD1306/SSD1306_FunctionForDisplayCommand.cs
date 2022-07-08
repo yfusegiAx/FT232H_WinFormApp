@@ -87,7 +87,10 @@ namespace FT232H_WinFormApp
             SetNormalDisplay(0xA6);
             SetDisplayClockDivideAndRatioOscillatorFrequency(0x80);
             SetDisplayOnOff(0xAF);
-            SetDisplay();
+            SetMemoryAddressingMode();
+            SetColumnAddress();
+
+
             return databytes;
         }
         public List<byte> DisplayWriteWords()//displayにGUIで入力した文字列を表示する
@@ -207,13 +210,7 @@ namespace FT232H_WinFormApp
             databytesAddRange(dataForSend);
         }
 
-        public void SetDisplay()
-        {
-            //8D->14->AFで点灯　8D->14->AEで消灯
-            byte[] dataForSend = new byte[] { 0x81,0xFF};
-            databytesAddRange(dataForSend);
-        }
-
+        
         public void SetMemoryAddressingMode()
         {
             //20h
@@ -286,6 +283,11 @@ namespace FT232H_WinFormApp
             byte[] dataForSend = new byte[] {0x00,0x00,0x00};
             databytesAddRange(dataForSend);
         }
+        public void SetDataForDisplayOn()
+        {
+            //oleに表示する内容について記述
+        }
+
     }
 
 }
