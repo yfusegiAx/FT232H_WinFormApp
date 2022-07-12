@@ -44,6 +44,7 @@ namespace FT232H_WinFormApp
             this.DeviceConnect_Button = new System.Windows.Forms.Button();
             this.AppEnd_Button = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.DisplayMode_comboBox = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -71,6 +72,7 @@ namespace FT232H_WinFormApp
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.SlaveSSD1306RadioButton = new System.Windows.Forms.RadioButton();
             this.SlaveBME280RadioButton = new System.Windows.Forms.RadioButton();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -101,6 +103,8 @@ namespace FT232H_WinFormApp
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.DisplayMode_comboBox);
             this.groupBox1.Location = new System.Drawing.Point(73, 162);
@@ -109,6 +113,13 @@ namespace FT232H_WinFormApp
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "SSD1306";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(6, 102);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(109, 23);
+            this.textBox1.TabIndex = 2;
             // 
             // label2
             // 
@@ -397,6 +408,16 @@ namespace FT232H_WinFormApp
             this.SlaveBME280RadioButton.UseVisualStyleBackColor = true;
             this.SlaveBME280RadioButton.CheckedChanged += new System.EventHandler(this.SlaveBME280RadioButton_CheckedChanged);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(48, 143);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -460,5 +481,7 @@ namespace FT232H_WinFormApp
         private RadioButton SlaveBME280RadioButton;
         private Label label2;
         private ComboBox DisplayMode_comboBox;
+        private TextBox textBox1;
+        private Button button1;
     }
 }

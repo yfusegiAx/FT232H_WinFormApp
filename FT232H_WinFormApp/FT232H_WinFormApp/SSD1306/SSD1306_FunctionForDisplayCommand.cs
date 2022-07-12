@@ -44,7 +44,7 @@ namespace FT232H_WinFormApp
 (re)seg127,seg126,...               seg0
 
      */
-    public partial class SSD1306
+    public partial class SSD1306 : FTDI_CommonFunction
     {
         /// ////////////////       共通            /////////////////////////////////
         

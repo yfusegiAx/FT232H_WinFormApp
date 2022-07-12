@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using FTD2XX_NET;
 using System.Threading;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace FT232H_WinFormApp
 {
@@ -199,6 +200,45 @@ namespace FT232H_WinFormApp
         {
             DisplayModeSelected = true;
             ssd1306.DisplayMode = DisplayMode_comboBox.SelectedItem;
+        }
+        /// <summary>
+        /// ulongデータを、ビッグエンディアンで、そのままdataリストに追加していく。
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public int AddListDataData(List<byte> data, ulong p)//0x 00 01 02 03 04 05 06 07 08
+        {
+            int datNum = 0;
+            for (int i = 7; i >= 0; i--)
+            {
+                int shift = (i << 3);
+                if (p >= (0x01UL << shift))
+                {
+                    data.Add((byte)((p & (0xFFUL << shift)) >> shift));
+                    datNum++;
+                }
+            }
+            return datNum;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            List<byte> data=new List<byte>();
+            var texts = Regex.Replace(textBox1.Text, "[^0-9a-fA-F ]", "").Split(' ');
+
+            foreach (var t in texts)
+            {
+                if (t != "" && t.Length < 17)
+                {
+                    ulong ut = Convert.ToUInt64(t, 16);
+                    if (ut == 0u)
+                        data.Add(0);
+                    else
+                        AddListDataData(data, ut);
+                }
+
+            }
+            Console.WriteLine(data);
         }
     }
 }
